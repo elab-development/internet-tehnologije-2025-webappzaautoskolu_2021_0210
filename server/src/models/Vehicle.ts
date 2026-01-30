@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 const vehicleSchema = new Schema(
   {
@@ -6,12 +6,11 @@ const vehicleSchema = new Schema(
     model: String,
     plateNumber: {
       type: String,
-      required: true,
       unique: true,
     },
-    available: {
-      type: Boolean,
-      default: true,
+    instructor: {
+      type: Types.ObjectId,
+      ref: 'Instructor',
     },
   },
   { timestamps: true }

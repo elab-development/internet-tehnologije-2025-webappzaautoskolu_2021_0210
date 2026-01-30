@@ -12,17 +12,18 @@ const lessonSchema = new Schema(
       ref: 'Instructor',
       required: true,
     },
-    vehicle: {
-      type: Types.ObjectId,
-      ref: 'Vehicle',
-    },
     date: {
       type: Date,
       required: true,
     },
     duration: {
       type: Number,
-      default: 45,
+      default: 60,
+    },
+     status: {
+      type: String,
+      enum: ['scheduled', 'completed', 'cancelled'],
+      default: 'scheduled',
     },
   },
   { timestamps: true }
