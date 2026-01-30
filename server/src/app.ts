@@ -1,19 +1,18 @@
 import express from 'express';
 import cors from 'cors';
-import authRoutes from './routes/authRoutes';
-import testRoutes from './routes/testRoutes';
 
+import authRoutes from './routes/authRoutes';
+import candidateRoutes from './routes/candidateRoutes';
+import instructorRoutes from './routes/instructorRoutes';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// ROUTES
 app.use('/api/auth', authRoutes);
-app.use('/api/test', testRoutes);
-
-
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'OK' });
-});
+app.use('/api/candidates', candidateRoutes);
+app.use('/api/instructors', instructorRoutes);
 
 export default app;

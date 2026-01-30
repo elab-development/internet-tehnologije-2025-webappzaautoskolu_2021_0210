@@ -12,9 +12,9 @@ const instructorSchema = new Schema(
       type: String,
       required: true,
     },
-    active: {
-      type: Boolean,
-      default: true,
+     experienceYears: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
