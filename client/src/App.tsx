@@ -1,32 +1,37 @@
-import { useEffect, useState } from "react";
-import { api } from "./api/axios";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Candidates from "./pages/Candidates";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import Navbar from "./components/layout/Navbar";
+import { Outlet } from "react-router-dom";
 
-export default function App() {
-  const [health, setHealth] = useState<string>("Učitavanje...");
-
-  useEffect(() => {
-    api
-      .get("/api/health")
-      .then((res) => {
-        setHealth(JSON.stringify(res.data, null, 2));
-      })
-      .catch((err) => {
-        setHealth("Greška: " + err.message);
-      });
-  }, []);
-
+function ProtectedLayout() {
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-6">
-      <div className="bg-slate-800 rounded-xl p-6 w-full max-w-xl shadow space-y-4">
-        <h1 className="text-2xl font-bold">Autoškola – Frontend</h1>
-
-        <div>
-          <p className="text-slate-300 mb-2">Backend health response:</p>
-          <pre className="bg-slate-900 p-4 rounded text-sm overflow-auto">
-            {health}
-          </pre>
-        </div>
+    <div className="min-h-screen bg-slate-900">
+      <Navbar />
+      <div className="max-w-5xl mx-auto">
+        <Outlet />
       </div>
     </div>
+  );
+}
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/candidates" element={<Candidates />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
