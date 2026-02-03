@@ -1,12 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const onLogout = () => {
+    logout();
     navigate("/login");
-  };
+};
+
+
 
   return (
     <div className="bg-slate-800 border-b border-slate-700 text-white">
@@ -22,7 +26,7 @@ export default function Navbar() {
           </Link>
 
           <button
-            onClick={logout}
+            onClick={onLogout}
             className="bg-slate-900 border border-slate-700 px-3 py-1 rounded hover:bg-slate-700"
           >
             Logout

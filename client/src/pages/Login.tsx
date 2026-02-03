@@ -1,16 +1,41 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { login as loginRequest } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    localStorage.setItem("token", "demo-token");
-    navigate("/dashboard");
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const data = await loginRequest(email, password);
+
+      setAuth(data.token, data.user);
+
+      navigate("/dashboard");
+    } catch (err: any) {
+
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Login failed";
+
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,32 +47,45 @@ export default function Login() {
           <div>
             <label className="block text-sm text-slate-300 mb-1">Email</label>
             <input
-              className="w-full rounded bg-slate-900 border border-slate-700 p-2"
+              className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="npr. test@mail.com"
+              autoComplete="email"
+              required
             />
           </div>
 
           <div>
             <label className="block text-sm text-slate-300 mb-1">Password</label>
             <input
-              className="w-full rounded bg-slate-900 border border-slate-700 p-2"
+              className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               placeholder="••••••••"
+              autoComplete="current-password"
+              required
             />
           </div>
 
-          <button className="w-full bg-blue-600 hover:bg-blue-500 rounded p-2 font-semibold">
-            Sign in
+          {error && (
+            <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
+              {error}
+            </div>
+          )}
+
+          <button
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:hover:bg-blue-600 rounded p-2 font-semibold"
+          >
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <p className="text-xs text-slate-400">
-          (Za sada demo login — u sledećem koraku povezujemo pravi /api/auth/login)
+          Login radi preko backend-a: <span className="text-slate-300">/api/auth/login</span>
         </p>
       </div>
     </div>
