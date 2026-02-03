@@ -5,6 +5,7 @@ import Candidates from "./pages/Candidates";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Navbar from "./components/layout/Navbar";
 import { Outlet } from "react-router-dom";
+import RoleRoute from "./routes/RoleRoute";
 
 function ProtectedLayout() {
   return (
@@ -24,11 +25,22 @@ export default function App() {
         <Route path="/login" element={<Login />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route element={<ProtectedLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/candidates" element={<Candidates />} />
-          </Route>
-        </Route>
+  <Route element={<ProtectedLayout />}>
+    <Route path="/dashboard" element={<Dashboard />} />
+
+    {/* admin + instructor */}
+    <Route element={<RoleRoute allow={["admin", "instructor"]} />}>
+      <Route path="/candidates" element={<Candidates />} />
+      {/* kasnije: /lessons */}
+    </Route>
+
+    {/* candidate-only rute (kasnije) */}
+    {/* <Route element={<RoleRoute allow={["candidate"]} />}>
+        <Route path="/my-lessons" element={<MyLessons />} />
+      </Route> */}
+  </Route>
+</Route>
+
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
