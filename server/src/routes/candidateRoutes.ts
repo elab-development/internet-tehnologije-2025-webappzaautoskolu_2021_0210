@@ -12,10 +12,20 @@ import { authorizeRoles } from '../middleware/roleMiddleware';
 
 const router = Router();
 
-router.post('/', protect, authorizeRoles('admin', 'instructor'), createCandidate);
-router.get('/', protect, getCandidates);
-router.get('/:id', protect, getCandidateById);
+//  samo admin kreira kandidata (upravljanje korisnicima)
+router.post('/', protect, authorizeRoles('admin'), createCandidate);
+
+//  admin + instructor mogu da vide kandidate
+router.get('/', protect, authorizeRoles('admin', 'instructor'), getCandidates);
+
+//  admin + instructor mogu da vide detalje kandidata
+router.get('/', protect, authorizeRoles('admin', 'instructor'), getCandidates);
+router.get('/:id', protect, authorizeRoles('admin', 'instructor'), getCandidateById);
+
+// admin + instructor mogu da update-uju (npr. totalLessons/napredak)
 router.put('/:id', protect, authorizeRoles('admin', 'instructor'), updateCandidate);
+
+//  samo admin briše
 router.delete('/:id', protect, authorizeRoles('admin'), deleteCandidate);
 
 export default router;

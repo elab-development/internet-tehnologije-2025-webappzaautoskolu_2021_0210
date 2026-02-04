@@ -4,18 +4,26 @@ import { Lesson } from '../models/Lesson';
 
 export const createLesson = async (req: Request, res: Response) => {
   try {
-    const { candidate, instructor, date, duration } = req.body;
+    const { title, candidate, instructor, date, duration, status } = req.body;
+
+    if (!title || String(title).trim().length < 3) {
+      return res.status(400).json({
+        message: 'Naziv časa je obavezan (minimum 3 karaktera).',
+      });
+    }
 
     const lesson = await Lesson.create({
+      title: String(title).trim(),
       candidate,
       instructor,
       date,
       duration,
+      status: status ?? 'scheduled',
     });
 
-    res.status(201).json(lesson);
+    return res.status(201).json(lesson);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to create lesson' });
+    return res.status(400).json({ message: 'Failed to create lesson' });
   }
 };
 

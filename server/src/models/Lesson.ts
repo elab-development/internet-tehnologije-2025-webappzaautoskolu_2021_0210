@@ -2,6 +2,12 @@ import { Schema, model, Types } from 'mongoose';
 
 const lessonSchema = new Schema(
   {
+    title: {
+      type: String,
+      trim: true,
+      default: 'Čas vožnje', // za vec ubete casove
+    },
+
     candidate: {
       type: Types.ObjectId,
       ref: 'Candidate',
@@ -20,7 +26,7 @@ const lessonSchema = new Schema(
       type: Number,
       default: 60,
     },
-     status: {
+    status: {
       type: String,
       enum: ['scheduled', 'completed', 'cancelled'],
       default: 'scheduled',
