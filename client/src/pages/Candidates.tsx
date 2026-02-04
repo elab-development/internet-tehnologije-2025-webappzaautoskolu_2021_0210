@@ -43,7 +43,6 @@ export default function Candidates() {
 
     try {
       await deleteCandidate(id);
-      // optimistično uklanjanje iz liste
       setItems((prev) => prev.filter((x) => x._id !== id));
     } catch (err: any) {
       alert(err?.response?.data?.message ?? err?.message ?? "Delete failed");

@@ -23,14 +23,20 @@ export default function Login() {
 
       setAuth(data.token, data.user);
 
-      navigate("/dashboard");
-    } catch (err: any) {
+      const role = data.user?.role;
 
+      if (role === "candidate") {
+        navigate("/kandidat");
+      } else {
+        // admin ili instructor
+        navigate("/dashboard");
+      }
+    } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
         err?.response?.data?.error ||
         err?.message ||
-        "Login failed";
+        "Neuspešna prijava";
 
       setError(msg);
     } finally {
@@ -41,11 +47,11 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-slate-800 rounded-xl p-6 shadow space-y-4">
-        <h1 className="text-2xl font-bold">Login</h1>
+        <h1 className="text-2xl font-bold">Prijava</h1>
 
         <form onSubmit={onSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm text-slate-300 mb-1">Email</label>
+            <label className="block text-sm text-slate-300 mb-1">Email adresa</label>
             <input
               className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
               value={email}
@@ -58,7 +64,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm text-slate-300 mb-1">Password</label>
+            <label className="block text-sm text-slate-300 mb-1">Lozinka</label>
             <input
               className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
               value={password}
@@ -72,7 +78,7 @@ export default function Login() {
 
           {error && (
             <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
-              {error}
+              Greška: {error}
             </div>
           )}
 
@@ -80,12 +86,13 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:hover:bg-blue-600 rounded p-2 font-semibold"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Prijavljivanje..." : "Prijavi se"}
           </button>
         </form>
 
         <p className="text-xs text-slate-400">
-          Login radi preko backend-a: <span className="text-slate-300">/api/auth/login</span>
+          Prijava radi preko backend-a:{" "}
+          <span className="text-slate-300">/api/auth/login</span>
         </p>
       </div>
     </div>

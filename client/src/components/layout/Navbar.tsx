@@ -5,45 +5,65 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
 
+  const role = user?.role;
+
   const onLogout = () => {
     logout();
     navigate("/login");
   };
 
-  const role = user?.role;
-
   return (
     <div className="bg-slate-800 border-b border-slate-700 text-white">
       <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
-        {/* Left */}
-        <div className="font-bold text-lg">Autoškola</div>
+        {/* Logo */}
+        <div className="font-bold text-lg">Auto-škola</div>
 
-        {/* Right */}
+        {/* Meni */}
         <div className="flex gap-4 items-center text-slate-200">
-          {/* SVI ULOGOVANI */}
-          <Link className="hover:text-white" to="/dashboard">
-            Dashboard
-          </Link>
-
           {/* ADMIN + INSTRUCTOR */}
           {(role === "admin" || role === "instructor") && (
-            <Link className="hover:text-white" to="/candidates">
-              Candidates
-            </Link>
+            <>
+              <Link className="hover:text-white" to="/dashboard">
+                Početna
+              </Link>
+
+              <Link className="hover:text-white" to="/candidates">
+                Kandidati
+              </Link>
+            </>
           )}
 
-          {/* KANDIDAT (primer za kasnije rute) */}
+          {/* CANDIDATE */}
           {role === "candidate" && (
-            <Link className="hover:text-white" to="/my-lessons">
-              My lessons
-            </Link>
+            <>
+              <Link className="hover:text-white" to="/kandidat">
+                Početna
+              </Link>
+
+              <Link className="hover:text-white" to="/moji-casovi">
+                Moji časovi
+              </Link>
+
+              <Link className="hover:text-white" to="/testovi">
+                Testovi
+              </Link>
+
+              <Link className="hover:text-white" to="/zakazivanje-voznje">
+                Zakazivanje vožnje
+              </Link>
+
+              <Link className="hover:text-white" to="/moji-rezultati">
+                Rezultati
+              </Link>
+            </>
           )}
 
+          {/* Logout */}
           <button
             onClick={onLogout}
             className="bg-slate-900 border border-slate-700 px-3 py-1 rounded hover:bg-slate-700"
           >
-            Logout
+            Odjava
           </button>
         </div>
       </div>
