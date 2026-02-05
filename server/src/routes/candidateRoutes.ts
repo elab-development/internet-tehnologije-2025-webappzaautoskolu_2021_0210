@@ -5,6 +5,8 @@ import {
   getCandidateById,
   updateCandidate,
   deleteCandidate,
+  getMyCandidateProfile,
+  getMyCandidate 
 } from '../controllers/candidateController';
 
 import { protect } from '../middleware/authMiddleware';
@@ -20,6 +22,8 @@ router.get('/', protect, authorizeRoles('admin', 'instructor'), getCandidates);
 
 //  admin + instructor mogu da vide detalje kandidata
 router.get('/', protect, authorizeRoles('admin', 'instructor'), getCandidates);
+router.get("/me",protect,authorizeRoles("candidate"), getMyCandidateProfile);
+router.get("/me", protect, authorizeRoles("candidate"), getMyCandidate);
 router.get('/:id', protect, authorizeRoles('admin', 'instructor'), getCandidateById);
 
 // admin + instructor mogu da update-uju (npr. totalLessons/napredak)

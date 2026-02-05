@@ -181,3 +181,40 @@ export const deleteCandidate = async (req: AuthRequest, res: Response) => {
     return res.status(400).json({ message: 'Failed to delete candidate' });
   }
 };
+
+//povezivanje front i back; kandidat dobija svoj candidate i instructor za lesson
+export const getMyCandidateProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const candidate = await Candidate.findOne({ user: req.user.id })
+      .populate("user", "name email role")
+      .populate("instructor");
+
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate profile not found" });
+    }
+
+    return res.json(candidate);
+  } catch (e) {
+    return res.status(500).json({ message: "Failed to fetch profile" });
+  }
+};
+
+export const getMyCandidate = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const candidate = await Candidate.findOne({ user: req.user.id })
+      .populate("user", "name email role")
+      .populate("instructor");
+
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate profile not found" });
+    }
+
+    res.json(candidate);
+  } catch {
+    res.status(500).json({ message: "Failed to fetch candidate profile" });
+  }
+};
