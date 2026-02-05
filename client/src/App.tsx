@@ -3,11 +3,16 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Candidates from "./pages/Candidates";
-import MyLessons from "./pages/MyLessons";
-import MyTestResults from "./pages/MyTestResults";
+
 import CandidateHome from "./pages/CandidateHome";
+import MyLessons from "./pages/MyLessons";
 import Tests from "./pages/Tests";
 import Booking from "./pages/Booking";
+import MyTestResults from "./pages/MyTestResults";
+
+// NOVO
+import MyRequests from "./pages/MyRequests";
+import InstructorRequests from "./pages/InstructorRequests";
 
 import Navbar from "./components/layout/Navbar";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -45,13 +50,21 @@ export default function App() {
               <Route path="/candidates" element={<Candidates />} />
             </Route>
 
+            {/* instructor-only */}
+            <Route element={<RoleRoute allow={["instructor"]} />}>
+              <Route path="/zahtevi" element={<InstructorRequests />} />
+            </Route>
+
             {/* candidate-only */}
             <Route element={<RoleRoute allow={["candidate"]} />}>
               <Route path="/kandidat" element={<CandidateHome />} />
               <Route path="/moji-casovi" element={<MyLessons />} />
               <Route path="/testovi" element={<Tests />} />
               <Route path="/moji-rezultati" element={<MyTestResults />} />
+
+              {/* NOVO: flow za zakazivanje */}
               <Route path="/zakazivanje-voznje" element={<Booking />} />
+              <Route path="/moji-zahtevi" element={<MyRequests />} />
             </Route>
           </Route>
         </Route>

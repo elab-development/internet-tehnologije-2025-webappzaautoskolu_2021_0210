@@ -13,3 +13,15 @@ export async function getLessons() {
   const res = await api.get<Lesson[]>("/api/lessons");
   return res.data;
 }
+
+export async function createLesson(payload: {
+  title: string;
+  candidate: string;
+  instructor: string;
+  date: string;
+  duration: number;
+  status: "scheduled";
+}) {
+  const res = await api.post("/api/lessons", payload);
+  return res.data;
+}

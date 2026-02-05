@@ -16,7 +16,7 @@ export default function Candidates() {
       const data = await getCandidates();
       setItems(data);
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? err?.message ?? "Failed to load candidates");
+      setError(err?.response?.data?.message ?? err?.message ?? "Ne mogu da učitam listu kandidata.");
     } finally {
       setLoading(false);
     }
@@ -45,38 +45,36 @@ export default function Candidates() {
       await deleteCandidate(id);
       setItems((prev) => prev.filter((x) => x._id !== id));
     } catch (err: any) {
-      alert(err?.response?.data?.message ?? err?.message ?? "Delete failed");
+      alert(err?.response?.data?.message ?? err?.message ?? "Brisanje nije uspelo.");
     }
   };
 
   return (
     <div className="p-6 text-white space-y-4">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Candidates</h1>
+        <h1 className="text-2xl font-bold">Kandidati</h1>
 
         <button
           onClick={load}
           className="bg-slate-800 border border-slate-700 px-3 py-2 rounded hover:bg-slate-700"
         >
-          Refresh
+          Osveži
         </button>
       </div>
 
       <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-3">
-        <div className="flex items-center gap-3">
-          <input
-            className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
-            placeholder="Search by name/email..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
+        <input
+          className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
+          placeholder="Pretraga po imenu/email-u..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
 
-        {loading && <p className="text-slate-300">Loading...</p>}
+        {loading && <p className="text-slate-300">Učitavanje...</p>}
 
         {error && (
           <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
-            {error}
+            Greška: {error}
           </div>
         )}
 
@@ -85,10 +83,10 @@ export default function Candidates() {
             <table className="w-full text-sm">
               <thead className="text-slate-300">
                 <tr className="border-b border-slate-700">
-                  <th className="text-left py-2">Name</th>
+                  <th className="text-left py-2">Ime</th>
                   <th className="text-left py-2">Email</th>
-                  <th className="text-left py-2">Total lessons</th>
-                  <th className="text-right py-2">Actions</th>
+                  <th className="text-left py-2">Ukupno časova</th>
+                  <th className="text-right py-2">Akcije</th>
                 </tr>
               </thead>
 
@@ -97,13 +95,13 @@ export default function Candidates() {
                   <tr key={c._id} className="border-b border-slate-800">
                     <td className="py-2">{c.user?.name ?? "-"}</td>
                     <td className="py-2 text-slate-300">{c.user?.email ?? "-"}</td>
-                    <td className="py-2">{c.totalLessons}</td>
+                    <td className="py-2">{c.totalLessons ?? 0}</td>
                     <td className="py-2 text-right">
                       <button
                         onClick={() => onDelete(c._id)}
                         className="bg-red-600 hover:bg-red-500 px-3 py-1 rounded"
                       >
-                        Delete
+                        Obriši
                       </button>
                     </td>
                   </tr>
@@ -112,7 +110,7 @@ export default function Candidates() {
                 {filtered.length === 0 && (
                   <tr>
                     <td className="py-3 text-slate-400" colSpan={4}>
-                      No candidates found.
+                      Nema kandidata za prikaz.
                     </td>
                   </tr>
                 )}
@@ -124,4 +122,3 @@ export default function Candidates() {
     </div>
   );
 }
-

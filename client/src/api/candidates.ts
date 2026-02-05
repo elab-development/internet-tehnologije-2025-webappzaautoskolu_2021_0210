@@ -1,22 +1,23 @@
 import { api } from "./axios";
-import type { Candidate } from "../types/models";
 
+// admin/instructor - lista kandidata
 export async function getCandidates() {
-  const res = await api.get<Candidate[]>("/api/candidates");
+  const res = await api.get("/api/candidates");
   return res.data;
 }
 
-export type CreateCandidateInput = {
-  userId: string;         
-  instructorId?: string;   
-  totalLessons?: number;   
-};
-
-export async function createCandidate(payload: CreateCandidateInput) {
-  const res = await api.post<Candidate>("/api/candidates", payload);
-  return res.data;
-}
-
+// admin - brisanje kandidata
 export async function deleteCandidate(id: string) {
   await api.delete(`/api/candidates/${id}`);
+}
+
+// candidate - moj profil (za booking)
+export type MyCandidate = {
+  _id: string;
+  instructor?: { _id: string };
+};
+
+export async function getMyCandidate() {
+  const res = await api.get<MyCandidate>("/api/candidates/me");
+  return res.data;
 }
