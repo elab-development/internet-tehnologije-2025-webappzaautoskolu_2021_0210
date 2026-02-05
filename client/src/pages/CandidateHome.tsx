@@ -1,74 +1,102 @@
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import InfoCard from "../components/ui/InfoCard";
+import { useAuth } from "../context/AuthContext";
 
 export default function CandidateHome() {
+  const { user } = useAuth();
+
+  const todayTip = useMemo(() => {
+    const tips = [
+      "Pre svake vožnje proveri ogledala i položaj sedišta – štedi greške na ispitu.",
+      "Na raskrsnici: prvo posmatranje, pa signalizacija, pa manevrisanje.",
+      "Kod kružnog toka: prati saobraćajne znakove i uključi pokazivač pravca na izlazu.",
+      "Prva pomoć: zapamti redosled – bezbednost, procena, poziv, pomoć.",
+    ];
+    return tips[Math.floor(Math.random() * tips.length)];
+  }, []);
+
   return (
     <div className="p-6 text-white space-y-6">
+      {/* HERO */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Dobrodošla, {user?.name ?? "kandidat"} 👋</h1>
+            <p className="text-slate-300 mt-1">
+              Ovde pratiš časove, zakazuješ vožnje i pripremaš se za polaganje.
+            </p>
+          </div>
 
-      {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-bold">Dobrodošli 👋</h1>
-        <p className="text-slate-300">
-          Ovde možete pratiti napredak obuke i brzo pristupiti najvažnijim akcijama.
-        </p>
-      </div>
-
-      {/* STATISTIKA */}
-      <div className="grid md:grid-cols-4 gap-4">
-        <StatCard title="Ukupno časova" value="32" />
-        <StatCard title="Završeno" value="18" />
-        <StatCard title="Preostalo" value="14" />
-        <StatCard title="Položeni testovi" value="3 / 5" />
-      </div>
-
-      {/* SLEDEĆI ČAS */}
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-        <h2 className="font-semibold text-lg mb-2">Sledeći čas vožnje</h2>
-
-        <div className="text-slate-300">
-          📅 12. mart 2026 • 16:00h <br />
-          👨‍🏫 Instruktor: Marko Petrović
-        </div>
-
-        <Link
-          to="/moji-casovi"
-          className="inline-block mt-4 bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded"
-        >
-          Pogledaj sve časove
-        </Link>
-      </div>
-
-      {/* BRZE AKCIJE */}
-      <div>
-        <h2 className="font-semibold text-lg mb-3">Brze akcije</h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          <ActionButton to="/zakazivanje-voznje" text="➕ Zakaži čas vožnje" />
-          <ActionButton to="/testovi" text="📝 Polaži test" />
-          <ActionButton to="/moji-rezultati" text="📊 Rezultati testova" />
+          <div className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3">
+            <div className="text-xs text-slate-400">Tip dana</div>
+            <div className="text-sm text-slate-200 mt-1">{todayTip}</div>
+          </div>
         </div>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-4">
+          <div className="text-xs text-slate-400">Status</div>
+          <div className="text-lg font-semibold mt-1">Aktivan kandidat</div>
+        </div>
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-4">
+          <div className="text-xs text-slate-400">Teorija</div>
+          <div className="text-lg font-semibold mt-1">Priprema u toku</div>
+        </div>
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-4">
+          <div className="text-xs text-slate-400">Prva pomoć</div>
+          <div className="text-lg font-semibold mt-1">Obuka preporučena</div>
+        </div>
+      </div>
+
+      {/* CARDS */}
+      <div>
+        <h2 className="text-xl font-bold mb-3">Brzi pristup</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <InfoCard
+            title="Zakazivanje vožnje"
+            badge="Kandidat → Instruktor"
+            description="Pošalji zahtev za termin. Instruktor potvrđuje i dodeljuje naziv časa."
+            to="/zakazivanje-voznje"
+            imageUrl="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1200&q=60"
+          />
+
+          <InfoCard
+            title="Moji zahtevi"
+            badge="Status"
+            description="Prati da li je zahtev na čekanju, odobren ili odbijen."
+            to="/moji-zahtevi"
+            imageUrl="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=60"
+          />
+
+          <InfoCard
+            title="Moji časovi"
+            badge="Vožnja"
+            description="Pregled zakazanih i odrađenih časova. Naziv časa dodeljuje instruktor."
+            to="/moji-casovi"
+            imageUrl="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=60"
+          />
+        </div>
+      </div>
+
+      {/* INFO SECTION */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <InfoCard
+          title="Teorijski ispit – preporuke"
+          badge="Priprema"
+          description="Uči znakove, prednost prolaza i pravila na raskrsnicama. Radi kratke testove svaki dan."
+          to="/testovi"
+          imageUrl="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=1200&q=60"
+        />
+
+        <InfoCard
+          title="Prva pomoć – šta je važno"
+          badge="Obavezno"
+          description="Nauči osnovne korake: bezbednost, procena stanja, poziv 194/112, reanimacija (osnove)."
+          imageUrl="https://images.unsplash.com/photo-1582719478185-2f8b2f1b7b7a?auto=format&fit=crop&w=1200&q=60"
+        />
+      </div>
     </div>
-  );
-}
-
-/* ---------- reusable male komponente ---------- */
-
-function StatCard({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-      <div className="text-slate-400 text-sm">{title}</div>
-      <div className="text-xl font-bold">{value}</div>
-    </div>
-  );
-}
-
-function ActionButton({ to, text }: { to: string; text: string }) {
-  return (
-    <Link
-      to={to}
-      className="block text-center bg-slate-800 border border-slate-700 rounded-xl p-4 hover:bg-slate-700"
-    >
-      {text}
-    </Link>
   );
 }

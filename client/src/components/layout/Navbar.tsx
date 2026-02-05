@@ -68,8 +68,7 @@ export default function Navbar() {
               <NavLink to="/moji-casovi" label="Moji časovi" />
               <NavLink to="/zakazivanje-voznje" label="Zakazivanje" />
               <NavLink to="/moji-zahtevi" label="Moji zahtevi" />
-              <NavLink to="/testovi" label="Testovi" />
-              <NavLink to="/moji-rezultati" label="Rezultati" />
+            
             </>
           )}
 

@@ -5,18 +5,18 @@ import Dashboard from "./pages/Dashboard";
 import Candidates from "./pages/Candidates";
 
 import CandidateHome from "./pages/CandidateHome";
-import MyLessons from "./pages/MyLessons";
-import Tests from "./pages/Tests";
 import Booking from "./pages/Booking";
-import MyTestResults from "./pages/MyTestResults";
+import MyLessons from "./pages/MyLessons";
 
-// NOVO
+
 import MyRequests from "./pages/MyRequests";
 import InstructorRequests from "./pages/InstructorRequests";
 
 import Navbar from "./components/layout/Navbar";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleRoute from "./routes/RoleRoute";
+import Landing from "./pages/Landing";
+import Signup from "./pages/Signup";
 
 function ProtectedLayout() {
   return (
@@ -34,7 +34,9 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* default */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Landing />} />
+<Route path="/signup" element={<Signup />} />
+
 
         {/* public */}
         <Route path="/login" element={<Login />} />
@@ -58,10 +60,7 @@ export default function App() {
             {/* candidate-only */}
             <Route element={<RoleRoute allow={["candidate"]} />}>
               <Route path="/kandidat" element={<CandidateHome />} />
-              <Route path="/moji-casovi" element={<MyLessons />} />
-              <Route path="/testovi" element={<Tests />} />
-              <Route path="/moji-rezultati" element={<MyTestResults />} />
-
+ <Route path="/moji-casovi" element={<MyLessons />} />
               {/* NOVO: flow za zakazivanje */}
               <Route path="/zakazivanje-voznje" element={<Booking />} />
               <Route path="/moji-zahtevi" element={<MyRequests />} />

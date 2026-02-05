@@ -5,6 +5,7 @@ type Role = "admin" | "instructor" | "candidate";
 type AuthUser = {
   email?: string;
   name?: string;
+  id:string;
   role?: Role;
 };
 

@@ -1,138 +1,110 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getLessons, type Lesson } from "../api/lessons";
-import Card from "../components/ui/Card";
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
+import { useAuth } from "../context/AuthContext";
 
-function formatDatum(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString("sr-RS");
+function formatDate(date: string) {
+  return new Date(date).toLocaleString("sr-RS", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+function statusColor(status: Lesson["status"]) {
+  switch (status) {
+    case "completed":
+      return "bg-green-600/20 text-green-400 border-green-700/40";
+    case "cancelled":
+      return "bg-red-600/20 text-red-400 border-red-700/40";
+    default:
+      return "bg-blue-600/20 text-blue-400 border-blue-700/40";
+  }
 }
 
 export default function MyLessons() {
-  const [items, setItems] = useState<Lesson[]>([]);
+  const { user } = useAuth();
+
+  const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
-  const [greska, setGreska] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const [status, setStatus] = useState<"svi" | Lesson["status"]>("svi");
-  const [pretraga, setPretraga] = useState("");
-
-  const ucitaj = async () => {
-    setLoading(true);
-    setGreska(null);
+  const load = async () => {
     try {
+      setLoading(true);
       const data = await getLessons();
-      setItems(data);
-    } catch (e: any) {
-      setGreska(e?.response?.data?.message ?? e?.message ?? "Ne mogu da učitam časove.");
+
+      // flitriranje samo časove ovog kandidata
+      const my = data.filter(
+        (l: any) => l.candidate?.user?._id === user?.id
+      );
+
+      setLessons(my);
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Greška pri učitavanju časova"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    ucitaj();
+    load();
   }, []);
 
-  const filtrirano = useMemo(() => {
-    let list = items;
-
-    if (status !== "svi") {
-      list = list.filter((l) => l.status === status);
-    }
-
-    const q = pretraga.trim().toLowerCase();
-    if (q) {
-      list = list.filter((l) => formatDatum(l.date).toLowerCase().includes(q));
-    }
-
-    return list;
-  }, [items, status, pretraga]);
-
   return (
-    <div className="p-6 text-white space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Moji časovi</h1>
-          <p className="text-slate-300">Pregled zakazanih i prethodnih časova vožnje.</p>
-        </div>
-        <Button variant="secondary" onClick={ucitaj}>
-          Osveži
-        </Button>
-      </div>
-
-      <Card>
-        <div className="grid md:grid-cols-3 gap-3">
-          <div>
-            <label className="block text-sm text-slate-300 mb-1">Status</label>
-            <select
-              className="w-full rounded bg-slate-900 border border-slate-700 p-2"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as any)}
-            >
-              <option value="svi">Svi</option>
-              <option value="scheduled">Zakazani</option>
-              <option value="completed">Završeni</option>
-              <option value="cancelled">Otkazani</option>
-            </select>
-          </div>
-
-          <Input
-            label="Pretraga (datum/vreme)"
-            value={pretraga}
-            onChange={setPretraga}
-            placeholder="npr. 12.3.2026"
-          />
-
-          <div className="flex items-end">
-            <div className="text-slate-300 text-sm">
-              Prikazano: <span className="font-semibold text-white">{filtrirano.length}</span>
-            </div>
-          </div>
-        </div>
-      </Card>
+    <div className="p-6 text-white space-y-6">
+      <h1 className="text-2xl font-bold">Moji časovi vožnje</h1>
 
       {loading && <p className="text-slate-300">Učitavanje...</p>}
 
-      {greska && (
-        <Card title="Greška">
-          <p className="text-red-400">{greska}</p>
-        </Card>
+      {error && (
+        <div className="text-red-400 bg-red-950/30 border border-red-900/60 rounded p-3">
+          {error}
+        </div>
       )}
 
-      {!loading && !greska && (
-        <Card title="Lista časova">
-          {filtrirano.length === 0 ? (
-            <p className="text-slate-300">Nema časova za prikaz.</p>
-          ) : (
-            <div className="overflow-auto">
-              <table className="w-full text-sm">
-                <thead className="text-slate-300">
-                  <tr className="border-b border-slate-700">
-                    <th className="text-left py-2">Datum</th>
-                    <th className="text-left py-2">Trajanje</th>
-                    <th className="text-left py-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtrirano.map((l) => (
-                    <tr key={l._id} className="border-b border-slate-800">
-                      <td className="py-2">{formatDatum(l.date)}</td>
-                      <td className="py-2">{l.duration} min</td>
-                      <td className="py-2">
-                        {l.status === "scheduled" && "Zakazan"}
-                        {l.status === "completed" && "Završen"}
-                        {l.status === "cancelled" && "Otkazan"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
+      {!loading && lessons.length === 0 && (
+        <div className="text-slate-400">
+          Trenutno nemaš zakazane časove.
+        </div>
       )}
+
+      {/* Kartice */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {lessons.map((lesson) => (
+          <div
+            key={lesson._id}
+            className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3 shadow"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-lg">
+                {lesson.title || "Čas vožnje"}
+              </h2>
+
+              <span
+                className={`text-xs px-3 py-1 rounded border ${statusColor(
+                  lesson.status
+                )}`}
+              >
+                {lesson.status === "scheduled" && "Zakazan"}
+                {lesson.status === "completed" && "Završen"}
+                {lesson.status === "cancelled" && "Otkazan"}
+              </span>
+            </div>
+
+            <div className="text-sm text-slate-300 space-y-1">
+              <p>📅 {formatDate(lesson.date)}</p>
+              <p>⏱ {lesson.duration} min</p>
+              <p>
+                👨‍🏫 Instruktor:{" "}
+                {lesson.instructor?.user?.name || "-"}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
