@@ -11,6 +11,7 @@ const candidateSchema = new Schema(
     instructor: {
       type: Types.ObjectId,
       ref: 'Instructor',
+      required:false,
     },
     totalLessons: {
       type: Number,
