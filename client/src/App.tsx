@@ -17,6 +17,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleRoute from "./routes/RoleRoute";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
+import Instructors from "./pages/Instructors";
 
 function ProtectedLayout() {
   return (
@@ -47,14 +48,16 @@ export default function App() {
             {/* zajedničko (svi ulogovani) */}
             <Route path="/dashboard" element={<Dashboard />} />
 
-            {/* admin + instructor */}
-            <Route element={<RoleRoute allow={["admin", "instructor"]} />}>
+            {/* admin */}
+            <Route element={<RoleRoute allow={["admin"]} />}>
               <Route path="/candidates" element={<Candidates />} />
+              <Route path="/instructors" element={<Instructors />} />
             </Route>
 
             {/* instructor-only */}
             <Route element={<RoleRoute allow={["instructor"]} />}>
               <Route path="/zahtevi" element={<InstructorRequests />} />
+              <Route path="/candidates" element={<Candidates />} />
             </Route>
 
             {/* candidate-only */}

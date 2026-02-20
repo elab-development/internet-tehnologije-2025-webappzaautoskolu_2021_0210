@@ -47,8 +47,9 @@ export default function Navbar() {
           {/* ADMIN */}
           {role === "admin" && (
             <>
-              <NavLink to="/dashboard" label="Početna" />
+              <NavLink to="/instructors" label="Instruktori" />
               <NavLink to="/candidates" label="Kandidati" />
+
             </>
           )}
 

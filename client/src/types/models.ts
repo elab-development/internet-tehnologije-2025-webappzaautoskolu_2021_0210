@@ -14,3 +14,18 @@ export type Candidate = {
   totalLessons: number;
 };
 
+export type Instructor = {
+  _id: string;
+
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+
+  licenseNumber: string;
+  experienceYears: number;
+
+  createdAt?: string;
+  updatedAt?: string;
+};
