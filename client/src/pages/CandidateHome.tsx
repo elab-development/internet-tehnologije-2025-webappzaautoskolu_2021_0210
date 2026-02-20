@@ -3,15 +3,45 @@ import { useAuth } from "../context/AuthContext";
 
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
-import InfoCard from "../components/ui/InfoCard";
+
 
 const steps = [
-  { key: "enrollment", title: "Upis u auto školu SmartDrive", desc: "Registracija i dodela instruktora koji te vodi kroz celu obuku.", badge: "Start" },
-  { key: "theory", title: "Teorijska nastava", desc: "Predavanja u učionici i priprema za testove saobraćajnih propisa.", badge: "Teorija" },
-  { key: "theory_exam", title: "Polaganje teorije", desc: "Test znanja iz saobraćajnih pravila i bezbednosti u saobraćaju.", badge: "Ispit" },
-  { key: "first_aid", title: "Prva pomoć", desc: "Osnove pružanja prve pomoći i reagovanje u hitnim situacijama.", badge: "Obavezno" },
-  { key: "practice", title: "Praktična vožnja", desc: "Časovi vožnje sa instruktorom i realne saobraćajne situacije.", badge: "Vožnja" },
-  { key: "final_exam", title: "Završni ispit", desc: "Polaganje vožnje pred komisijom i sticanje vozačke dozvole.", badge: "Finale" },
+  {
+    key: "enrollment",
+    title: "Upis u auto školu SmartDrive",
+    desc: "Registracija i dodela instruktora koji te vodi kroz celu obuku.",
+    
+  },
+  {
+    key: "theory",
+    title: "Teorijska nastava",
+    desc: "Predavanja u učionici i priprema za testove saobraćajnih propisa.",
+   
+  },
+  {
+    key: "theory_exam",
+    title: "Polaganje teorije",
+    desc: "Test znanja iz saobraćajnih pravila i bezbednosti u saobraćaju.",
+ 
+  },
+  {
+    key: "first_aid",
+    title: "Prva pomoć",
+    desc: "Osnove pružanja prve pomoći i reagovanje u hitnim situacijama.",
+   
+  },
+  {
+    key: "practice",
+    title: "Praktična vožnja",
+    desc: "Časovi vožnje sa instruktorom i realne saobraćajne situacije.",
+
+  },
+  {
+    key: "final_exam",
+    title: "Završni ispit",
+    desc: "Polaganje vožnje pred komisijom i sticanje vozačke dozvole.",
+ 
+  },
 ];
 
 function Pill({
@@ -49,9 +79,11 @@ function Modal({
 }) {
   useEffect(() => {
     if (!open) return;
+
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
@@ -82,6 +114,7 @@ export default function CandidateHome() {
   const { user } = useAuth();
 
   const userId = user?.id ?? null;
+
   const stableUserKey = userId
     ? `id:${userId}`
     : user?.email
@@ -137,6 +170,7 @@ export default function CandidateHome() {
     const remaining = total - done;
     const percent = Math.round((done / total) * 100);
     const completed = done === total;
+
     return { total, done, remaining, percent, completed };
   }, [theoryDone]);
 
@@ -148,8 +182,11 @@ export default function CandidateHome() {
     });
   };
 
-  const markAllTheory = () => setTheoryDone(Array.from({ length: 20 }, () => true));
-  const resetTheory = () => setTheoryDone(Array.from({ length: 20 }, () => false));
+  const markAllTheory = () =>
+    setTheoryDone(Array.from({ length: 20 }, () => true));
+
+  const resetTheory = () =>
+    setTheoryDone(Array.from({ length: 20 }, () => false));
 
   return (
     <div className="min-h-screen text-white px-6 md:px-10 lg:px-14 py-12 md:py-16">
@@ -179,7 +216,8 @@ export default function CandidateHome() {
                   </div>
 
                   <p className="text-slate-300 text-base md:text-lg mt-4">
-                    Klikni da označiš koje si teorijske časove prešao/la, kako bi bio/la u toku sa svojim napretkom.
+                    Klikni da označiš koje si teorijske časove prešao/la, kako bi
+                    bio/la u toku sa svojim napretkom.
                   </p>
 
                   {!userId && (
@@ -191,7 +229,10 @@ export default function CandidateHome() {
 
                 <div className="w-full xl:w-[720px]">
                   <div className="h-4 md:h-5 rounded-full bg-slate-800 border border-slate-700 overflow-hidden">
-                    <div className="h-full bg-blue-600" style={{ width: `${theoryStats.percent}%` }} />
+                    <div
+                      className="h-full bg-blue-600"
+                      style={{ width: `${theoryStats.percent}%` }}
+                    />
                   </div>
 
                   <div className="mt-5 grid grid-cols-3 gap-4">
@@ -242,7 +283,9 @@ export default function CandidateHome() {
                   onChange={() => toggleTheory(i)}
                   className="h-5 w-5"
                 />
-                <span className="text-lg text-slate-200 font-medium">Čas {i + 1}</span>
+                <span className="text-lg text-slate-200 font-medium">
+                  Čas {i + 1}
+                </span>
               </label>
             ))}
           </div>
@@ -253,25 +296,43 @@ export default function CandidateHome() {
           </div>
         </Modal>
 
-        {/* PLAN OBUKE */}
-        <div className="px-1 md:px-2 space-y-6">
-          <div className="flex items-end justify-between">
-            <h2 className="text-2xl md:text-3xl font-bold">Plan obuke</h2>
+      {/* PLAN OBUKE */}
+<div className="px-1 md:px-2 space-y-6">
+  <div className="flex items-end justify-between">
+    <h2 className="text-2xl md:text-3xl font-bold">Plan obuke</h2>
+    <div className="text-sm text-slate-400">Korak po korak</div>
+  </div>
+
+  <Card>
+    <div className="space-y-5">
+      {steps.map((step, idx) => (
+        <div key={step.key} className="flex gap-4">
+          {/* broj + linija */}
+          <div className="flex flex-col items-center">
+            <div className="h-10 w-10 rounded-full bg-slate-800 border border-slate-700 grid place-items-center font-semibold">
+              {idx + 1}
+            </div>
+            {idx !== steps.length - 1 && (
+              <div className="w-px flex-1 bg-slate-800 mt-2" />
+            )}
           </div>
 
-          {/* InfoCard reusable */}
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {steps.map((step) => (
-              <InfoCard
-                key={step.key}
-                title={step.title}
-                description={step.desc}
-                badge={step.badge}
-                imageUrl="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=60"
-              />
-            ))}
+          {/* tekst */}
+          <div className="flex-1 pb-1">
+            <div className="flex items-start justify-between gap-3">
+              <div className="text-lg font-semibold text-white">
+                {step.title}
+              </div>
+
+            </div>
+
+            <p className="text-slate-300 mt-1">{step.desc}</p>
           </div>
         </div>
+      ))}
+    </div>
+  </Card>
+</div>
       </div>
     </div>
   );

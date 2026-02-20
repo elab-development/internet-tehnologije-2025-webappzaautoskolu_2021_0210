@@ -46,9 +46,7 @@ export default function Login() {
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <Card title="Log in">
-          <p className="text-slate-300 text-sm mb-4">
-            Prijavi se na SmartDrive panel.
-          </p>
+         
 
           <form onSubmit={onSubmit} className="space-y-3">
             <Input
@@ -56,7 +54,7 @@ export default function Login() {
               value={email}
               onChange={setEmail}
               type="email"
-              placeholder="npr. milica@test.com"
+              placeholder="npr. test@test.com"
             />
 
             <Input
