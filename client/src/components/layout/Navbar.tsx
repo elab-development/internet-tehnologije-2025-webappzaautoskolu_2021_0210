@@ -40,7 +40,7 @@ export default function Navbar() {
     <div className="bg-slate-800 border-b border-slate-700 text-white">
       <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="font-bold text-lg">Auto-škola</div>
+        <div className="font-bold text-lg">Auto škola SmartDrive</div>
 
         {/* Meni */}
         <div className="flex gap-2 items-center">

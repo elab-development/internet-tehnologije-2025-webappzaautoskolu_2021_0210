@@ -1,38 +1,41 @@
-import { Link } from "react-router-dom";
-import hero from "../assets/hero.jpg";
+import { useNavigate } from "react-router-dom";
+import hero from "../assets/hero1.jpeg";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
 
 export default function Landing() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
-      {/* TOP NAV */}
+      
       <div className="w-full px-10 py-6 flex justify-between items-center border-b border-slate-800">
         <h1 className="text-2xl font-bold tracking-wide">
           AUTO ŠKOLA <span className="text-blue-500">SmartDrive</span>
         </h1>
 
         <div className="flex gap-3">
-          <Link
-            to="/login"
-            className="px-5 py-2 rounded-lg border border-slate-700 hover:bg-slate-800 transition"
+          <Button
+            variant="secondary"
+            onClick={() => navigate("/login")}
           >
             Log in
-          </Link>
+          </Button>
 
-          <Link
-            to="/signup"
-            className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 font-semibold transition"
+          <Button
+            variant="primary"
+            onClick={() => navigate("/signup")}
           >
             Sign up
-          </Link>
+          </Button>
         </div>
       </div>
 
-
-      {/* HERO SECTION */}
+   
       <div className="w-full grid md:grid-cols-2 items-center px-10 py-20 gap-16">
 
-        {/* TEXT */}
+      
         <div className="space-y-7">
           <h2 className="text-5xl font-extrabold leading-tight">
             Nauči da voziš <br />
@@ -41,29 +44,11 @@ export default function Landing() {
 
           <p className="text-slate-300 text-lg leading-relaxed max-w-xl">
             SmartDrive je moderna digitalna auto-škola koja ti omogućava da sve
-            organizuješ online: časove vožnje, zahteve, napredak i rezultate.
-            Bez papira. Bez haosa. Samo fokus na polaganje.
+            organizuješ online: časove vožnje, pregled lekcija, rad testova i rezultate.
+            Bez papira. Bez haosa.
           </p>
-
-          <div className="flex gap-4 pt-3">
-            <Link
-              to="/signup"
-              className="px-6 py-3 bg-blue-600 rounded-xl font-semibold hover:bg-blue-500"
-            >
-              Započni obuku
-            </Link>
-
-            <Link
-              to="/login"
-              className="px-6 py-3 border border-slate-700 rounded-xl hover:bg-slate-800"
-            >
-              Prijava
-            </Link>
-          </div>
         </div>
 
-
-        {/* IMAGE */}
         <div className="relative">
           <img
             src={hero}
@@ -73,60 +58,33 @@ export default function Landing() {
         </div>
       </div>
 
+     
+      <div className="w-full bg-slate-900/60 px-10 py-16">
+        <div className="grid md:grid-cols-3 gap-8">
 
-      {/* INFO SECTION */}
-<div className="w-full bg-slate-900/60 px-10 py-16">
-  <div className="grid md:grid-cols-3 gap-8 text-slate-300">
+          <Card title="Plan obuke">
+            <p className="text-slate-300">
+              Struktuisan program: učenje teorije, praktična vožnja i priprema za ispit.
+              Sve aktivnosti jasno organizovane kroz aplikaciju.
+            </p>
+          </Card>
 
-    {/* CARD */}
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8
-                    transition-all duration-300
-                    hover:scale-105 hover:bg-slate-800 hover:shadow-xl cursor-pointer">
+          <Card title="Podrška instruktora">
+            <p className="text-slate-300">
+              Fleksibilno zakazivanje časova - kandidat šalje zahtev za termin,
+              a instruktor potvrđuje. Bez konflikata u rasporedu.
+            </p>
+          </Card>
 
-      <h3 className="text-blue-400 font-bold text-xl mb-3">
-        Plan obuke
-      </h3>
+          <Card title="Napredak i rezultati">
+            <p className="text-slate-300">
+              Prati odrađene časove, statistiku, rezultate testova i svoj napredak
+              u realnom vremenu na jednom mestu.
+            </p>
+          </Card>
 
-      <p>
-        Struktuisan program: teorija, praktična vožnja i priprema za ispit.
-        Sve aktivnosti jasno organizovane kroz aplikaciju.
-      </p>
+        </div>
+      </div>
     </div>
-
-
-    {/* CARD */}
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8
-                    transition-all duration-300
-                    hover:scale-105 hover:bg-slate-800 hover:shadow-xl cursor-pointer">
-
-      <h3 className="text-blue-400 font-bold text-xl mb-3">
-        Podrška instruktora
-      </h3>
-
-      <p>
-        Kandidat šalje zahtev za termin, a instruktor potvrđuje.
-        Bez konflikata u rasporedu i bez čekanja u redovima.
-      </p>
-    </div>
-
-
-    {/* CARD */}
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8
-                    transition-all duration-300
-                    hover:scale-105 hover:bg-slate-800 hover:shadow-xl cursor-pointer">
-
-      <h3 className="text-blue-400 font-bold text-xl mb-3">
-        Napredak i rezultati
-      </h3>
-
-      <p>
-        Prati odrađene časove, statistiku, rezultate testova i svoj napredak
-        u realnom vremenu na jednom mestu.
-      </p>
-    </div>
-
-  </div>
- </div>
-  </div>
-);
+  );
 }

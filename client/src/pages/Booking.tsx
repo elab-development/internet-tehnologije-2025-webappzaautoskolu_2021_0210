@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { createLessonRequest } from "../api/lessonRequests";
 
+import Card from "../components/ui/Card";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+
 export default function Booking() {
   const [requestedDate, setRequestedDate] = useState("");
   const [duration, setDuration] = useState(60);
@@ -16,7 +20,6 @@ export default function Booking() {
 
     setLoading(true);
     try {
-      // backend očekuje ISO Date string
       await createLessonRequest({
         requestedDate: new Date(requestedDate).toISOString(),
         duration,
@@ -25,7 +28,11 @@ export default function Booking() {
       setRequestedDate("");
       setDuration(60);
     } catch (e: any) {
-      setErr(e?.response?.data?.message ?? e?.message ?? "Greška prilikom slanja zahteva.");
+      setErr(
+        e?.response?.data?.message ??
+          e?.message ??
+          "Greška prilikom slanja zahteva."
+      );
     } finally {
       setLoading(false);
     }
@@ -40,48 +47,43 @@ export default function Booking() {
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-3">
-        <div>
-          <label className="block text-sm text-slate-300 mb-1">Predlog termina</label>
-          <input
+      <Card title="Pošalji zahtev">
+        <form onSubmit={onSubmit} className="space-y-3">
+          {/* Input komponenta trenutno ne podržava datetime-local i number idealno,
+              pa joj prosleđujemo type string i vrednost kao string */}
+          <Input
+            label="Predlog termina"
             type="datetime-local"
             value={requestedDate}
-            onChange={(e) => setRequestedDate(e.target.value)}
-            className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
-            required
+            onChange={setRequestedDate}
           />
-        </div>
 
-        <div>
-          <label className="block text-sm text-slate-300 mb-1">Trajanje (min)</label>
-          <input
+          <Input
+            label="Trajanje (min)"
             type="number"
-            min={30}
-            step={15}
-            value={duration}
-            onChange={(e) => setDuration(Number(e.target.value))}
-            className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500"
+            value={String(duration)}
+            onChange={(v) => setDuration(Number(v))}
+            placeholder="npr. 60"
           />
-        </div>
 
-        {err && (
-          <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
-            {err}
-          </div>
-        )}
-        {msg && (
-          <div className="text-sm text-green-300 bg-green-950/30 border border-green-900/60 rounded p-2">
-            {msg}
-          </div>
-        )}
+          {err && (
+            <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
+              {err}
+            </div>
+          )}
+          {msg && (
+            <div className="text-sm text-green-300 bg-green-950/30 border border-green-900/60 rounded p-2">
+              {msg}
+            </div>
+          )}
 
-        <button
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-500 disabled:opacity-60 px-4 py-2 rounded font-semibold"
-        >
-          {loading ? "Šaljem..." : "Pošalji zahtev"}
-        </button>
-      </form>
+          <div className="pt-1">
+            <Button type="submit" disabled={loading} variant="primary">
+              {loading ? "Šaljem..." : "Pošalji zahtev"}
+            </Button>
+          </div>
+        </form>
+      </Card>
     </div>
   );
 }

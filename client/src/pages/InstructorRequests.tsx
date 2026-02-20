@@ -6,6 +6,9 @@ import {
   type LessonRequest,
 } from "../api/lessonRequests";
 
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+
 function formatDT(iso: string) {
   return new Date(iso).toLocaleString("sr-RS");
 }
@@ -68,15 +71,14 @@ export default function InstructorRequests() {
     <div className="p-6 text-white space-y-4">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Zahtevi za časove</h1>
-        <button
-          onClick={load}
-          className="bg-slate-800 border border-slate-700 px-3 py-2 rounded hover:bg-slate-700"
-        >
+
+        <Button variant="secondary" onClick={load} disabled={loading}>
           Osveži
-        </button>
+        </Button>
       </div>
 
       {loading && <p className="text-slate-300">Učitavanje...</p>}
+
       {err && (
         <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
           {err}
@@ -86,9 +88,8 @@ export default function InstructorRequests() {
       {!loading && !err && (
         <div className="grid gap-3">
           {items.map((r) => (
-            <div key={r._id} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+            <Card key={r._id} title={formatDT(r.requestedDate)}>
               <div className="flex items-center justify-between">
-                <div className="font-semibold">{formatDT(r.requestedDate)}</div>
                 <div className="text-sm text-slate-300">Trajanje: {r.duration} min</div>
               </div>
 
@@ -99,24 +100,24 @@ export default function InstructorRequests() {
                 </span>
               </div>
 
-              <div className="mt-3 flex gap-2">
-                <button
+              <div className="mt-4 flex gap-2">
+                <Button
                   disabled={busyId === r._id}
                   onClick={() => onApprove(r._id)}
-                  className="bg-green-600 hover:bg-green-500 disabled:opacity-60 px-3 py-2 rounded"
+                  variant="primary"
                 >
-                  Odobri
-                </button>
+                  {busyId === r._id ? "Radim..." : "Odobri"}
+                </Button>
 
-                <button
+                <Button
                   disabled={busyId === r._id}
                   onClick={() => onReject(r._id)}
-                  className="bg-red-600 hover:bg-red-500 disabled:opacity-60 px-3 py-2 rounded"
+                  variant="danger"
                 >
                   Odbij
-                </button>
+                </Button>
               </div>
-            </div>
+            </Card>
           ))}
 
           {items.length === 0 && (

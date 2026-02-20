@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { login as loginRequest } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
+import Card from "../components/ui/Card";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+
 export default function Login() {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
@@ -40,72 +44,52 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow space-y-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold">Log in</h1>
-          <p className="text-slate-300 text-sm">
+      <div className="w-full max-w-md">
+        <Card title="Log in">
+          <p className="text-slate-300 text-sm mb-4">
             Prijavi se na SmartDrive panel.
           </p>
-        </div>
 
-        <form onSubmit={onSubmit} className="space-y-3">
-          <div>
-            <label className="block text-sm text-slate-300 mb-1">Email</label>
-            <input
-              className="w-full rounded bg-slate-950 border border-slate-700 p-2 outline-none focus:border-slate-500"
+          <form onSubmit={onSubmit} className="space-y-3">
+            <Input
+              label="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={setEmail}
               type="email"
               placeholder="npr. milica@test.com"
-              autoComplete="email"
-              required
             />
-          </div>
 
-          <div>
-            <label className="block text-sm text-slate-300 mb-1">Lozinka</label>
-            <input
-              className="w-full rounded bg-slate-950 border border-slate-700 p-2 outline-none focus:border-slate-500"
+            <Input
+              label="Lozinka"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={setPassword}
               type="password"
               placeholder="••••••••"
-              autoComplete="current-password"
-              required
             />
-          </div>
 
-          {error && (
-            <div className="text-sm text-red-300 bg-red-950/30 border border-red-900/60 rounded p-2">
-              {error}
+            {error && (
+              <div className="text-sm text-red-300 bg-red-950/30 border border-red-900/60 rounded p-2">
+                {error}
+              </div>
+            )}
+
+            <div className="pt-1 space-y-2">
+              <Button type="submit" disabled={loading} variant="primary">
+                {loading ? "Prijavljivanje..." : "Prijavi se"}
+              </Button>
+
+              <div className="flex items-center justify-between text-sm text-slate-300">
+                <button type="button" onClick={() => navigate("/")} className="hover:text-white">
+                  ← Početna
+                </button>
+
+                <button type="button" onClick={() => navigate("/signup")} className="hover:text-white">
+                  Nemam nalog
+                </button>
+              </div>
             </div>
-          )}
-
-          <button
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-60 rounded p-2 font-semibold"
-          >
-            {loading ? "Prijavljivanje..." : "Prijavi se"}
-          </button>
-
-          <div className="flex items-center justify-between text-sm text-slate-300">
-            <button
-              type="button"
-              onClick={() => navigate("/")}
-              className="hover:text-white"
-            >
-              ← Početna
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate("/signup")}
-              className="hover:text-white"
-            >
-              Nemam nalog
-            </button>
-          </div>
-        </form>
+          </form>
+        </Card>
       </div>
     </div>
   );
