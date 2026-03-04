@@ -56,7 +56,6 @@ export default function Navbar() {
           {/* INSTRUCTOR */}
           {role === "instructor" && (
             <>
-              <NavLink to="/dashboard" label="Početna" />
               <NavLink to="/candidates" label="Kandidati" />
               <NavLink to="/zahtevi" label="Zahtevi" />
             </>

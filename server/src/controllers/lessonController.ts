@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { Lesson } from "../models/Lesson";
 import { Candidate } from "../models/Candidate";
+import { Instructor } from "../models/Instructor";
+
+
 
 type AuthedUser = { id: string; role: "admin" | "instructor" | "candidate" };
 
@@ -8,7 +11,6 @@ export const createLesson = async (req: Request, res: Response) => {
   try {
     const { title, candidate, instructor, date, duration, status } = req.body;
 
-    // title nije obavezan po tvom modelu (ima default), ali ostavljam tvoju validaciju
     if (!title || String(title).trim().length < 3) {
       return res.status(400).json({
         message: "Naziv časa je obavezan (minimum 3 karaktera).",
@@ -38,11 +40,16 @@ export const getLessons = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    //  default je kandidat (least privilege)
     const role = (user.role || "").toLowerCase();
+    const now = new Date();
 
-    // admin ima sve
+    // ADMIN: može sve + može global update (opciono)
     if (role === "admin") {
+      await Lesson.updateMany(
+        { status: "scheduled", date: { $lt: now } },
+        { $set: { status: "completed" } }
+      );
+
       const lessons = await Lesson.find()
         .sort({ date: 1 })
         .populate({ path: "candidate", populate: { path: "user", select: "name email" } })
@@ -51,16 +58,38 @@ export const getLessons = async (req: Request, res: Response) => {
       return res.json(lessons);
     }
 
-    // instructor po defaultu samo njegovi časovi 
+    // INSTRUCTOR: update samo njegovih časova
     if (role === "instructor") {
-      return res.status(403).json({ message: "Instructor filtering not configured yet" });
+      const instructor = await Instructor.findOne({ user: user.id });
+
+      if (!instructor) {
+        return res.status(404).json({ message: "Instructor profile not found" });
+      }
+
+      await Lesson.updateMany(
+        { instructor: instructor._id, status: "scheduled", date: { $lt: now } },
+        { $set: { status: "completed" } }
+      );
+
+      const lessons = await Lesson.find({ instructor: instructor._id })
+        .sort({ date: 1 })
+        .populate({ path: "candidate", populate: { path: "user", select: "name email" } })
+        .populate({ path: "instructor", populate: { path: "user", select: "name email" } });
+
+      return res.json(lessons);
     }
 
-    // kandidat  samo njegovi
+    // CANDIDATE: update samo njegovih časova
     const candidate = await Candidate.findOne({ user: user.id });
+
     if (!candidate) {
       return res.status(404).json({ message: "Candidate profile not found" });
     }
+
+    await Lesson.updateMany(
+      { candidate: candidate._id, status: "scheduled", date: { $lt: now } },
+      { $set: { status: "completed" } }
+    );
 
     const lessons = await Lesson.find({ candidate: candidate._id })
       .sort({ date: 1 })

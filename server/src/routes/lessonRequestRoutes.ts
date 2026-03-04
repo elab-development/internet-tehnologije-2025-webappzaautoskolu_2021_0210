@@ -12,11 +12,9 @@ import {
 
 const router = Router();
 
-// candidate
 router.post("/", protect, authorizeRoles("candidate"), createLessonRequest);
 router.get("/my", protect, authorizeRoles("candidate"), getMyLessonRequests);
 
-// instructor
 router.get("/instructor", protect, authorizeRoles("instructor"), getInstructorLessonRequests);
 router.patch("/:id/approve", protect, authorizeRoles("instructor"), approveLessonRequest);
 router.patch("/:id/reject", protect, authorizeRoles("instructor"), rejectLessonRequest);

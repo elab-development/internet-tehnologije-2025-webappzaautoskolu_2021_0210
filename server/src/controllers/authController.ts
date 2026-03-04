@@ -21,7 +21,7 @@ async function pickInstructorWithLeastCandidates() {
   const map = new Map<string, number>();
   for (const c of counts) map.set(String(c._id), c.count);
 
-  // sortiraj instruktore po broju kandidata, pa po _id (stabilno)
+  // sortiraj instruktore po broju kandidata, pa po _id 
   const sorted = [...instructors].sort((a: any, b: any) => {
     const ca = map.get(String(a._id)) ?? 0;
     const cb = map.get(String(b._id)) ?? 0;
@@ -51,10 +51,8 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email je već u upotrebi." });
     }
 
-    // ✅ HASH PASSWORD
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // kreiraj user-a kao kandidata
     const user = await User.create({
       name,
       email,
@@ -62,10 +60,9 @@ export const register = async (req: Request, res: Response) => {
       role: "candidate",
     });
 
-    // dodeli instruktora sa najmanje kandidata
     const instructorId = await pickInstructorWithLeastCandidates();
 
-    // kreiraj Candidate profil (ako nema instruktora, ostaje null/undefined)
+    // kreiraj Candidate profil (ako nema instruktora, ostaje null/undefined, za one sa pocetka sto sam pravila)
     const candidate = await Candidate.create({
       user: user._id,
       instructor: instructorId ?? undefined,
@@ -84,6 +81,7 @@ export const register = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Register failed." });
   }
 };
+
 export const login = async (req:Request, res:Response) => {
   const { email, password } = req.body;
 

@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+
+  mongodb:
+    image: mongo
+    container_name: autoskola-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  server:
+    build: ./server
+    container_name: autoskola-server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/autoskola
+      - JWT_SECRET=secret
+
+  client:
+    build: ./client
+    container_name: autoskola-client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:

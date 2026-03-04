@@ -6,7 +6,6 @@ import { AuthRequest } from '../types/AuthRequest';
 /*
   CREATE candidate
   POST /api/candidates
-  (route treba da bude admin-only)
 */
 export const createCandidate = async (req: AuthRequest, res: Response) => {
   try {
@@ -26,6 +25,7 @@ export const createCandidate = async (req: AuthRequest, res: Response) => {
       .populate('user', 'name email role')
       .populate('instructor');
 
+
     return res.status(201).json(populated ?? candidate);
   } catch (error) {
     return res.status(400).json({ message: 'Failed to create candidate' });
@@ -36,9 +36,9 @@ export const createCandidate = async (req: AuthRequest, res: Response) => {
   READ all candidates
   GET /api/candidates
 
-  ✅ admin -> all
-  ✅ instructor -> only candidates assigned to that instructor
-  ❌ candidate -> forbidden
+   admin - all
+   instructor - samo njegovi kand
+   candidate -zabr
 */
 export const getCandidates = async (req: AuthRequest, res: Response) => {
   try {
@@ -121,8 +121,8 @@ export const getCandidateById = async (req: AuthRequest, res: Response) => {
   UPDATE candidate
   PUT /api/candidates/:id
 
-  admin -> sve
-  instructor -> samo svje kandidate
+  admin -sve
+  instructor -samo svje kandidate
 */
 export const updateCandidate = async (req: AuthRequest, res: Response) => {
   try {
@@ -185,7 +185,7 @@ export const deleteCandidate = async (req: AuthRequest, res: Response) => {
 //povezivanje front i back; kandidat dobija svoj candidate i instructor za lesson
 export const getMyCandidateProfile = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" }); //ako nema jwt tok
 
     const candidate = await Candidate.findOne({ user: req.user.id })
       .populate("user", "name email role")

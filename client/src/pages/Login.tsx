@@ -26,9 +26,12 @@ export default function Login() {
       const data = await loginRequest(email, password);
       setAuth(data.token, data.user);
 
-      const role = data.user?.role;
+      const role = (data.user?.role || "").toLowerCase();
+
       if (role === "candidate") navigate("/kandidat");
-      else navigate("/dashboard");
+      else if (role === "admin") navigate("/instructors");
+      else if (role === "instructor") navigate("/zahtevi");
+      else navigate("/login");
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
@@ -46,8 +49,6 @@ export default function Login() {
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <Card title="Log in">
-         
-
           <form onSubmit={onSubmit} className="space-y-3">
             <Input
               label="Email"
@@ -77,11 +78,19 @@ export default function Login() {
               </Button>
 
               <div className="flex items-center justify-between text-sm text-slate-300">
-                <button type="button" onClick={() => navigate("/")} className="hover:text-white">
+                <button
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="hover:text-white"
+                >
                   ← Početna
                 </button>
 
-                <button type="button" onClick={() => navigate("/signup")} className="hover:text-white">
+                <button
+                  type="button"
+                  onClick={() => navigate("/signup")}
+                  className="hover:text-white"
+                >
                   Nemam nalog
                 </button>
               </div>

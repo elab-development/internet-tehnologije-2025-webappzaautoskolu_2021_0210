@@ -1,14 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
 import Candidates from "./pages/Candidates";
+import Instructors from "./pages/Instructors";
 
 import CandidateHome from "./pages/CandidateHome";
 import Booking from "./pages/Booking";
 import MyLessons from "./pages/MyLessons";
-
-
 import MyRequests from "./pages/MyRequests";
 import InstructorRequests from "./pages/InstructorRequests";
 
@@ -17,7 +15,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleRoute from "./routes/RoleRoute";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
-import Instructors from "./pages/Instructors";
 
 function ProtectedLayout() {
   return (
@@ -34,37 +31,33 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* default */}
-        <Route path="/" element={<Landing />} />
-<Route path="/signup" element={<Signup />} />
-
-
         {/* public */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
         {/* protected */}
         <Route element={<ProtectedRoute />}>
           <Route element={<ProtectedLayout />}>
-            {/* zajedničko (svi ulogovani) */}
-            <Route path="/dashboard" element={<Dashboard />} />
-
-            {/* admin */}
-            <Route element={<RoleRoute allow={["admin"]} />}>
+            {/* ✅ zajedničko: admin + instructor */}
+            <Route element={<RoleRoute allow={["admin", "instructor"]} />}>
               <Route path="/candidates" element={<Candidates />} />
+            </Route>
+
+            {/* ✅ admin-only */}
+            <Route element={<RoleRoute allow={["admin"]} />}>
               <Route path="/instructors" element={<Instructors />} />
             </Route>
 
-            {/* instructor-only */}
+            {/* ✅ instructor-only */}
             <Route element={<RoleRoute allow={["instructor"]} />}>
               <Route path="/zahtevi" element={<InstructorRequests />} />
-              <Route path="/candidates" element={<Candidates />} />
             </Route>
 
-            {/* candidate-only */}
+            {/* ✅ candidate-only */}
             <Route element={<RoleRoute allow={["candidate"]} />}>
               <Route path="/kandidat" element={<CandidateHome />} />
- <Route path="/moji-casovi" element={<MyLessons />} />
-              {/* NOVO: flow za zakazivanje */}
+              <Route path="/moji-casovi" element={<MyLessons />} />
               <Route path="/zakazivanje-voznje" element={<Booking />} />
               <Route path="/moji-zahtevi" element={<MyRequests />} />
             </Route>
