@@ -1,20 +1,21 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
-import Login from "./pages/Login";
-import Candidates from "./pages/Candidates";
-import Instructors from "./pages/Instructors";
+import Login from './pages/Login';
+import Candidates from './pages/Candidates';
+import Instructors from './pages/Instructors';
 
-import CandidateHome from "./pages/CandidateHome";
-import Booking from "./pages/Booking";
-import MyLessons from "./pages/MyLessons";
-import MyRequests from "./pages/MyRequests";
-import InstructorRequests from "./pages/InstructorRequests";
+import CandidateHome from './pages/CandidateHome';
+import Booking from './pages/Booking';
+import MyLessons from './pages/MyLessons';
+import MyRequests from './pages/MyRequests';
+import InstructorRequests from './pages/InstructorRequests';
+import InstructorCalendar from './pages/InstructorCalendar';
 
-import Navbar from "./components/layout/Navbar";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import RoleRoute from "./routes/RoleRoute";
-import Landing from "./pages/Landing";
-import Signup from "./pages/Signup";
+import Navbar from './components/layout/Navbar';
+import ProtectedRoute from './routes/ProtectedRoute';
+import RoleRoute from './routes/RoleRoute';
+import Landing from './pages/Landing';
+import Signup from './pages/Signup';
 
 function ProtectedLayout() {
   return (
@@ -39,23 +40,24 @@ export default function App() {
         {/* protected */}
         <Route element={<ProtectedRoute />}>
           <Route element={<ProtectedLayout />}>
-            {/* ✅ zajedničko: admin + instructor */}
-            <Route element={<RoleRoute allow={["admin", "instructor"]} />}>
+            {/* zajednicko: admin + instructor */}
+            <Route element={<RoleRoute allow={['admin', 'instructor']} />}>
               <Route path="/candidates" element={<Candidates />} />
             </Route>
 
-            {/* ✅ admin-only */}
-            <Route element={<RoleRoute allow={["admin"]} />}>
+            {/* admin-only */}
+            <Route element={<RoleRoute allow={['admin']} />}>
               <Route path="/instructors" element={<Instructors />} />
             </Route>
 
-            {/* ✅ instructor-only */}
-            <Route element={<RoleRoute allow={["instructor"]} />}>
+            {/* instructor-only */}
+            <Route element={<RoleRoute allow={['instructor']} />}>
               <Route path="/zahtevi" element={<InstructorRequests />} />
+              <Route path="/instruktor-kalendar" element={<InstructorCalendar />} />
             </Route>
 
-            {/* ✅ candidate-only */}
-            <Route element={<RoleRoute allow={["candidate"]} />}>
+            {/* candidate-only */}
+            <Route element={<RoleRoute allow={['candidate']} />}>
               <Route path="/kandidat" element={<CandidateHome />} />
               <Route path="/moji-casovi" element={<MyLessons />} />
               <Route path="/zakazivanje-voznje" element={<Booking />} />

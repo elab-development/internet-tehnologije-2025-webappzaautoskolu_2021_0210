@@ -1,7 +1,48 @@
 import { Response } from 'express';
 import { Candidate } from '../models/Candidate';
 import { Instructor } from '../models/Instructor';
+import { Lesson } from '../models/Lesson';
 import { AuthRequest } from '../types/AuthRequest';
+
+type CandidateDoc = {
+  _id: unknown;
+  instructor?: unknown;
+  toObject: () => Record<string, unknown>;
+};
+
+const attachPassedLessonsCount = async (candidates: CandidateDoc[]) => {
+  if (!candidates.length) return candidates;
+
+  const now = new Date();
+  const candidateIds = candidates.map((candidate) => candidate._id);
+
+  const counts = await Lesson.aggregate<{ _id: unknown; totalLessons: number }>([
+    {
+      $match: {
+        candidate: { $in: candidateIds },
+        $or: [
+          { status: 'completed' },
+          { status: 'scheduled', date: { $lt: now } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: '$candidate',
+        totalLessons: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const countsByCandidateId = new Map(
+    counts.map((entry) => [String(entry._id), Number(entry.totalLessons) || 0])
+  );
+
+  return candidates.map((candidate) => ({
+    ...candidate.toObject(),
+    totalLessons: countsByCandidateId.get(String(candidate._id)) ?? 0,
+  }));
+};
 
 /*
   CREATE candidate
@@ -48,7 +89,8 @@ export const getCandidates = async (req: AuthRequest, res: Response) => {
         .populate('user', 'name email role')
         .populate('instructor');
 
-      return res.json(candidates);
+      const candidatesWithCounts = await attachPassedLessonsCount(candidates);
+      return res.json(candidatesWithCounts);
     }
 
     // Instructor: vidi samo svoje
@@ -62,7 +104,8 @@ export const getCandidates = async (req: AuthRequest, res: Response) => {
         .populate('user', 'name email role')
         .populate('instructor');
 
-      return res.json(candidates);
+      const candidatesWithCounts = await attachPassedLessonsCount(candidates);
+      return res.json(candidatesWithCounts);
     }
 
     // Candidate ili drugi: zabrana
@@ -90,7 +133,7 @@ export const getCandidateById = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: 'Candidate not found' });
     }
 
-    // Admin: može sve
+    // Admin: moze sve
     if (req.user?.role === 'admin') {
       return res.json(candidate);
     }
@@ -128,7 +171,7 @@ export const updateCandidate = async (req: AuthRequest, res: Response) => {
   try {
     const { instructor, totalLessons } = req.body;
 
-    // Ako je instruktor, ne dozvoli da update-uje tuđe kandidate
+    // Ako je instruktor, ne dozvoli da update-uje tudje kandidate
     if (req.user?.role === 'instructor') {
       const me = await Instructor.findOne({ user: req.user.id });
       if (!me) {
@@ -182,39 +225,40 @@ export const deleteCandidate = async (req: AuthRequest, res: Response) => {
   }
 };
 
-//povezivanje front i back; kandidat dobija svoj candidate i instructor za lesson
+// povezivanje front i back; kandidat dobija svoj candidate i instructor za lesson
 export const getMyCandidateProfile = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ message: "Unauthorized" }); //ako nema jwt tok
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' }); // ako nema jwt tok
 
     const candidate = await Candidate.findOne({ user: req.user.id })
-      .populate("user", "name email role")
-      .populate("instructor");
+      .populate('user', 'name email role')
+      .populate('instructor');
 
     if (!candidate) {
-      return res.status(404).json({ message: "Candidate profile not found" });
+      return res.status(404).json({ message: 'Candidate profile not found' });
     }
 
     return res.json(candidate);
   } catch (e) {
-    return res.status(500).json({ message: "Failed to fetch profile" });
+    return res.status(500).json({ message: 'Failed to fetch profile' });
   }
 };
 
 export const getMyCandidate = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
 
     const candidate = await Candidate.findOne({ user: req.user.id })
-      .populate("user", "name email role")
-      .populate("instructor");
+      .populate('user', 'name email role')
+      .populate('instructor');
 
     if (!candidate) {
-      return res.status(404).json({ message: "Candidate profile not found" });
+      return res.status(404).json({ message: 'Candidate profile not found' });
     }
 
     res.json(candidate);
   } catch {
-    res.status(500).json({ message: "Failed to fetch candidate profile" });
+    res.status(500).json({ message: 'Failed to fetch candidate profile' });
   }
 };
+

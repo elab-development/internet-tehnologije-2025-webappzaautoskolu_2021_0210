@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login as loginRequest } from "../api/auth";
-import { useAuth } from "../context/AuthContext";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login as loginRequest } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
-import Card from "../components/ui/Card";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
+import Card from '../components/ui/Card';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
 
 export default function Login() {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,22 +24,43 @@ export default function Login() {
 
     try {
       const data = await loginRequest(email, password);
-      setAuth(data.token, data.user);
 
-      const role = (data.user?.role || "").toLowerCase();
+      if (!data.user?.id) {
+        throw new Error('Neispravan odgovor servera: user profil nedostaje.');
+      }
 
-      if (role === "candidate") navigate("/kandidat");
-      else if (role === "admin") navigate("/instructors");
-      else if (role === "instructor") navigate("/zahtevi");
-      else navigate("/login");
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "Prijava nije uspela";
+      setAuth(data.token, {
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role,
+      });
 
-      setError(msg);
+      const role = (data.user.role || '').toLowerCase();
+
+      if (role === 'candidate') navigate('/kandidat');
+      else if (role === 'admin') navigate('/instructors');
+      else if (role === 'instructor') navigate('/zahtevi');
+      else navigate('/login');
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err && 'response' in err) {
+        const maybeAxiosErr = err as {
+          response?: { data?: { message?: string; error?: string } };
+          message?: string;
+        };
+
+        const msg =
+          maybeAxiosErr.response?.data?.message ||
+          maybeAxiosErr.response?.data?.error ||
+          maybeAxiosErr.message ||
+          'Prijava nije uspela';
+
+        setError(msg);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Prijava nije uspela');
+      }
     } finally {
       setLoading(false);
     }
@@ -63,7 +84,7 @@ export default function Login() {
               value={password}
               onChange={setPassword}
               type="password"
-              placeholder="••••••••"
+              placeholder="********"
             />
 
             {error && (
@@ -74,21 +95,21 @@ export default function Login() {
 
             <div className="pt-1 space-y-2">
               <Button type="submit" disabled={loading} variant="primary">
-                {loading ? "Prijavljivanje..." : "Prijavi se"}
+                {loading ? 'Prijavljivanje...' : 'Prijavi se'}
               </Button>
 
               <div className="flex items-center justify-between text-sm text-slate-300">
                 <button
                   type="button"
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate('/')}
                   className="hover:text-white"
                 >
-                  ← Početna
+                  Pocetna
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => navigate("/signup")}
+                  onClick={() => navigate('/signup')}
                   className="hover:text-white"
                 >
                   Nemam nalog

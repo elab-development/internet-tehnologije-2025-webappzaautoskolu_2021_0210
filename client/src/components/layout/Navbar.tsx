@@ -1,5 +1,5 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 function NavLink({
   to,
@@ -15,10 +15,10 @@ function NavLink({
     <Link
       to={to}
       className={
-        "px-3 py-1 rounded border " +
+        'px-3 py-1 rounded border ' +
         (active
-          ? "text-white bg-slate-900 border-slate-600"
-          : "text-slate-200 border-transparent hover:text-white hover:bg-slate-700")
+          ? 'text-white bg-slate-900 border-slate-600'
+          : 'text-slate-200 border-transparent hover:text-white hover:bg-slate-700')
       }
     >
       {label}
@@ -33,46 +33,39 @@ export default function Navbar() {
 
   const onLogout = () => {
     logout();
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
     <div className="bg-slate-800 border-b border-slate-700 text-white">
       <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <div className="font-bold text-lg">Auto škola SmartDrive</div>
+        <div className="font-bold text-lg">Auto skola SmartDrive</div>
 
-        {/* Meni */}
         <div className="flex gap-2 items-center">
-          {/* ADMIN */}
-          {role === "admin" && (
+          {role === 'admin' && (
             <>
               <NavLink to="/instructors" label="Instruktori" />
               <NavLink to="/candidates" label="Kandidati" />
-
             </>
           )}
 
-          {/* INSTRUCTOR */}
-          {role === "instructor" && (
+          {role === 'instructor' && (
             <>
               <NavLink to="/candidates" label="Kandidati" />
               <NavLink to="/zahtevi" label="Zahtevi" />
+              <NavLink to="/instruktor-kalendar" label="Kalendar" />
             </>
           )}
 
-          {/* CANDIDATE */}
-          {role === "candidate" && (
+          {role === 'candidate' && (
             <>
-              <NavLink to="/kandidat" label="Početna" />
-              <NavLink to="/moji-casovi" label="Moji časovi" />
+              <NavLink to="/kandidat" label="Pocetna" />
+              <NavLink to="/moji-casovi" label="Moji casovi" />
               <NavLink to="/zakazivanje-voznje" label="Zakazivanje" />
               <NavLink to="/moji-zahtevi" label="Moji zahtevi" />
-            
             </>
           )}
 
-          {/* Logout */}
           <button
             onClick={onLogout}
             className="ml-2 bg-slate-900 border border-slate-700 px-3 py-1 rounded hover:bg-slate-700"
