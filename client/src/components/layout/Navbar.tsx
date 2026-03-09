@@ -1,5 +1,5 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function NavLink({
   to,
@@ -15,10 +15,10 @@ function NavLink({
     <Link
       to={to}
       className={
-        'px-3 py-1 rounded border ' +
+        "px-3 py-1 rounded border " +
         (active
-          ? 'text-white bg-slate-900 border-slate-600'
-          : 'text-slate-200 border-transparent hover:text-white hover:bg-slate-700')
+          ? "text-white bg-slate-900 border-slate-600"
+          : "text-slate-200 border-transparent hover:text-white hover:bg-slate-700")
       }
     >
       {label}
@@ -33,7 +33,7 @@ export default function Navbar() {
 
   const onLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -42,14 +42,15 @@ export default function Navbar() {
         <div className="font-bold text-lg">Auto skola SmartDrive</div>
 
         <div className="flex gap-2 items-center">
-          {role === 'admin' && (
+          {role === "admin" && (
             <>
               <NavLink to="/instructors" label="Instruktori" />
               <NavLink to="/candidates" label="Kandidati" />
+              <NavLink to="/testovi-admin" label="Testovi admin" />
             </>
           )}
 
-          {role === 'instructor' && (
+          {role === "instructor" && (
             <>
               <NavLink to="/candidates" label="Kandidati" />
               <NavLink to="/zahtevi" label="Zahtevi" />
@@ -57,9 +58,11 @@ export default function Navbar() {
             </>
           )}
 
-          {role === 'candidate' && (
+          {role === "candidate" && (
             <>
               <NavLink to="/kandidat" label="Pocetna" />
+              <NavLink to="/testovi" label="Testovi" />
+              <NavLink to="/napredak" label="Napredak" />
               <NavLink to="/moji-casovi" label="Moji casovi" />
               <NavLink to="/zakazivanje-voznje" label="Zakazivanje" />
               <NavLink to="/moji-zahtevi" label="Moji zahtevi" />

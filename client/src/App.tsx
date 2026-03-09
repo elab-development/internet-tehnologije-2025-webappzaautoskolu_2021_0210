@@ -1,21 +1,24 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 
-import Login from './pages/Login';
-import Candidates from './pages/Candidates';
-import Instructors from './pages/Instructors';
+import Login from "./pages/Login";
+import Candidates from "./pages/Candidates";
+import Instructors from "./pages/Instructors";
 
-import CandidateHome from './pages/CandidateHome';
-import Booking from './pages/Booking';
-import MyLessons from './pages/MyLessons';
-import MyRequests from './pages/MyRequests';
-import InstructorRequests from './pages/InstructorRequests';
-import InstructorCalendar from './pages/InstructorCalendar';
+import CandidateHome from "./pages/CandidateHome";
+import Booking from "./pages/Booking";
+import MyLessons from "./pages/MyLessons";
+import MyRequests from "./pages/MyRequests";
+import InstructorRequests from "./pages/InstructorRequests";
+import InstructorCalendar from "./pages/InstructorCalendar";
+import CandidateTests from "./pages/CandidateTests";
+import CandidateProgress from "./pages/CandidateProgress";
+import AdminTests from "./pages/AdminTests";
 
-import Navbar from './components/layout/Navbar';
-import ProtectedRoute from './routes/ProtectedRoute';
-import RoleRoute from './routes/RoleRoute';
-import Landing from './pages/Landing';
-import Signup from './pages/Signup';
+import Navbar from "./components/layout/Navbar";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import RoleRoute from "./routes/RoleRoute";
+import Landing from "./pages/Landing";
+import Signup from "./pages/Signup";
 
 function ProtectedLayout() {
   return (
@@ -32,41 +35,37 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* public */}
         <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
-        {/* protected */}
         <Route element={<ProtectedRoute />}>
           <Route element={<ProtectedLayout />}>
-            {/* zajednicko: admin + instructor */}
-            <Route element={<RoleRoute allow={['admin', 'instructor']} />}>
+            <Route element={<RoleRoute allow={["admin", "instructor"]} />}>
               <Route path="/candidates" element={<Candidates />} />
             </Route>
 
-            {/* admin-only */}
-            <Route element={<RoleRoute allow={['admin']} />}>
+            <Route element={<RoleRoute allow={["admin"]} />}>
               <Route path="/instructors" element={<Instructors />} />
+              <Route path="/testovi-admin" element={<AdminTests />} />
             </Route>
 
-            {/* instructor-only */}
-            <Route element={<RoleRoute allow={['instructor']} />}>
+            <Route element={<RoleRoute allow={["instructor"]} />}>
               <Route path="/zahtevi" element={<InstructorRequests />} />
               <Route path="/instruktor-kalendar" element={<InstructorCalendar />} />
             </Route>
 
-            {/* candidate-only */}
-            <Route element={<RoleRoute allow={['candidate']} />}>
+            <Route element={<RoleRoute allow={["candidate"]} />}>
               <Route path="/kandidat" element={<CandidateHome />} />
               <Route path="/moji-casovi" element={<MyLessons />} />
               <Route path="/zakazivanje-voznje" element={<Booking />} />
               <Route path="/moji-zahtevi" element={<MyRequests />} />
+              <Route path="/testovi" element={<CandidateTests />} />
+              <Route path="/napredak" element={<CandidateProgress />} />
             </Route>
           </Route>
         </Route>
 
-        {/* fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
