@@ -46,7 +46,7 @@ export default function Navbar() {
             <>
               <NavLink to="/instructors" label="Instruktori" />
               <NavLink to="/candidates" label="Kandidati" />
-              <NavLink to="/testovi-admin" label="Testovi admin" />
+              <NavLink to="/testovi-admin" label="Testovi" />
             </>
           )}
 
@@ -60,10 +60,9 @@ export default function Navbar() {
 
           {role === "candidate" && (
             <>
-              <NavLink to="/kandidat" label="Pocetna" />
+              <NavLink to="/kandidat" label="Početna" />
               <NavLink to="/testovi" label="Testovi" />
-              <NavLink to="/napredak" label="Napredak" />
-              <NavLink to="/moji-casovi" label="Moji casovi" />
+              <NavLink to="/moji-casovi" label="Moji časovi" />
               <NavLink to="/zakazivanje-voznje" label="Zakazivanje" />
               <NavLink to="/moji-zahtevi" label="Moji zahtevi" />
             </>

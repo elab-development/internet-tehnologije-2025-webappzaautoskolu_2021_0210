@@ -3,14 +3,12 @@ import { getCandidates, deleteCandidate } from "../api/candidates";
 import type { Candidate } from "../types/models";
 
 import Card from "../components/ui/Card";
-import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 
 export default function Candidates() {
   const [items, setItems] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [query, setQuery] = useState("");
 
   const load = async () => {
@@ -20,11 +18,7 @@ export default function Candidates() {
       const data = await getCandidates();
       setItems(data);
     } catch (err: any) {
-      setError(
-        err?.response?.data?.message ??
-          err?.message ??
-          "Ne mogu da učitam listu kandidata."
-      );
+      setError(err?.response?.data?.message ?? err?.message ?? "Ne mogu da ucitam listu kandidata.");
     } finally {
       setLoading(false);
     }
@@ -46,7 +40,7 @@ export default function Candidates() {
   }, [items, query]);
 
   const onDelete = async (id: string) => {
-    const ok = confirm("Da li si sigurna da želiš da obrišeš kandidata?");
+    const ok = confirm("Da li si sigurna da zelis da obrises kandidata?");
     if (!ok) return;
 
     try {
@@ -59,28 +53,22 @@ export default function Candidates() {
 
   return (
     <div className="p-6 text-white space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Kandidati</h1>
-
-        <Button variant="secondary" onClick={load} disabled={loading}>
-          Osveži
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold">Kandidati</h1>
 
       <Card title="Lista kandidata">
         <div className="space-y-3">
-          <Input
-            label="Pretraga"
+          <input
+            className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500 text-white"
             placeholder="Pretraga po imenu/email-u..."
             value={query}
-            onChange={setQuery}
+            onChange={(e) => setQuery(e.target.value)}
           />
 
-          {loading && <p className="text-slate-300">Učitavanje...</p>}
+          {loading && <p className="text-slate-300">Ucitavanje...</p>}
 
           {error && (
             <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
-              Greška: {error}
+              Greska: {error}
             </div>
           )}
 
@@ -91,7 +79,7 @@ export default function Candidates() {
                   <tr className="border-b border-slate-700">
                     <th className="text-left py-2">Ime</th>
                     <th className="text-left py-2">Email</th>
-                    <th className="text-left py-2">Ukupno časova</th>
+                    <th className="text-left py-2">Ukupno casova</th>
                     <th className="text-right py-2">Akcije</th>
                   </tr>
                 </thead>
@@ -103,11 +91,8 @@ export default function Candidates() {
                       <td className="py-2 text-slate-300">{c.user?.email ?? "-"}</td>
                       <td className="py-2">{c.totalLessons ?? 0}</td>
                       <td className="py-2 text-right">
-                        <Button
-                          variant="danger"
-                          onClick={() => onDelete(c._id)}
-                        >
-                          Obriši
+                        <Button variant="danger" onClick={() => onDelete(c._id)}>
+                          Obrisi
                         </Button>
                       </td>
                     </tr>

@@ -8,6 +8,7 @@ import lessonRoutes from "./routes/lessonRoutes";
 import vehicleRoutes from "./routes/vehicleRoutes";
 import lessonRequestRoutes from "./routes/lessonRequestRoutes";
 import testRoutes from "./routes/testRoutes";
+import externalRoutes from "./routes/externalRoutes";
 import { protect } from "./middleware/authMiddleware";
 
 import swaggerUi from "swagger-ui-express";
@@ -35,5 +36,6 @@ app.use("/api/lessons", lessonRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/lesson-requests", lessonRequestRoutes);
 app.use("/api/tests", testRoutes);
+app.use("/api/external", externalRoutes);
 
 export default app;

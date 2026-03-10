@@ -5,7 +5,7 @@ export default function Input({
   placeholder,
   type = "text",
 }: {
-  label: string;
+  label?: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;

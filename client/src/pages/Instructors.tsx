@@ -3,14 +3,12 @@ import { getInstructors, deleteInstructor } from "../api/instructors";
 import type { Instructor } from "../types/models";
 
 import Card from "../components/ui/Card";
-import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 
 export default function Instructors() {
   const [items, setItems] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [query, setQuery] = useState("");
 
   const load = async () => {
@@ -21,9 +19,7 @@ export default function Instructors() {
       setItems(data);
     } catch (err: any) {
       setError(
-        err?.response?.data?.message ??
-          err?.message ??
-          "Ne mogu da učitam listu instruktora."
+        err?.response?.data?.message ?? err?.message ?? "Ne mogu da ucitam listu instruktora."
       );
     } finally {
       setLoading(false);
@@ -46,43 +42,35 @@ export default function Instructors() {
   }, [items, query]);
 
   const onDelete = async (id: string) => {
-    const ok = confirm("Da li si siguran/na da želiš da obrišeš instruktora?");
+    const ok = confirm("Da li si siguran/na da zelis da obrises instruktora?");
     if (!ok) return;
 
     try {
       await deleteInstructor(id);
       setItems((prev) => prev.filter((x) => x._id !== id));
     } catch (err: any) {
-      alert(
-        err?.response?.data?.message ?? err?.message ?? "Brisanje nije uspelo."
-      );
+      alert(err?.response?.data?.message ?? err?.message ?? "Brisanje nije uspelo.");
     }
   };
 
   return (
     <div className="p-6 text-white space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Instruktori</h1>
-
-        <Button variant="secondary" onClick={load} disabled={loading}>
-          Osveži
-        </Button>
-      </div>
+      <h1 className="text-2xl font-bold">Instruktori</h1>
 
       <Card title="Lista instruktora">
         <div className="space-y-3">
-          <Input
-            label="Pretraga"
+          <input
+            className="w-full rounded bg-slate-900 border border-slate-700 p-2 outline-none focus:border-slate-500 text-white"
             placeholder="Pretraga po imenu/email-u..."
             value={query}
-            onChange={setQuery}
+            onChange={(e) => setQuery(e.target.value)}
           />
 
-          {loading && <p className="text-slate-300">Učitavanje...</p>}
+          {loading && <p className="text-slate-300">Ucitavanje...</p>}
 
           {error && (
             <div className="text-sm text-red-400 bg-red-950/30 border border-red-900/60 rounded p-2">
-              Greška: {error}
+              Greska: {error}
             </div>
           )}
 
@@ -104,7 +92,7 @@ export default function Instructors() {
                       <td className="py-2 text-slate-300">{i.user?.email ?? "-"}</td>
                       <td className="py-2 text-right">
                         <Button variant="danger" onClick={() => onDelete(i._id)}>
-                          Obriši
+                          Obrisi
                         </Button>
                       </td>
                     </tr>

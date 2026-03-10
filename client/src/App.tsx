@@ -11,7 +11,6 @@ import MyRequests from "./pages/MyRequests";
 import InstructorRequests from "./pages/InstructorRequests";
 import InstructorCalendar from "./pages/InstructorCalendar";
 import CandidateTests from "./pages/CandidateTests";
-import CandidateProgress from "./pages/CandidateProgress";
 import AdminTests from "./pages/AdminTests";
 
 import Navbar from "./components/layout/Navbar";
@@ -61,7 +60,6 @@ export default function App() {
               <Route path="/zakazivanje-voznje" element={<Booking />} />
               <Route path="/moji-zahtevi" element={<MyRequests />} />
               <Route path="/testovi" element={<CandidateTests />} />
-              <Route path="/napredak" element={<CandidateProgress />} />
             </Route>
           </Route>
         </Route>

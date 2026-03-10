@@ -12,7 +12,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction) => 
 
     const token = auth.split(" ")[1]; //izvlaci od bearer
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;  //da li je token validan/istekao/da li je potpis ispravan
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;             //da li je token validan/istekao/da li je potpis ispravan
 
     const id = decoded?.id || decoded?._id || decoded?.userId || decoded?.sub;
     const role = decoded?.role;

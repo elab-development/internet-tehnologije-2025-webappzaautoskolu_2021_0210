@@ -3,11 +3,9 @@ import Card from "../components/ui/Card";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import {
-  cleanupInvalidTestsAdmin,
   createTestAdmin,
   deleteTestAdmin,
   getAllTestsAdmin,
-  updateTestStatusAdmin,
   type AdminTestSummary,
 } from "../api/tests";
 
@@ -23,12 +21,7 @@ const emptyQuestion = (): DraftQuestion => ({
   correctOption: 0,
 });
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleString("sr-RS", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
+
 
 export default function AdminTests() {
   const [tests, setTests] = useState<AdminTestSummary[]>([]);
@@ -126,20 +119,6 @@ export default function AdminTests() {
     }
   };
 
-  const toggleStatus = async (test: AdminTestSummary) => {
-    try {
-      setError(null);
-      const updated = await updateTestStatusAdmin(test._id, !test.isActive);
-      setTests((prev) =>
-        prev.map((item) =>
-          item._id === test._id ? { ...item, isActive: updated.isActive } : item
-        )
-      );
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Greska pri promeni statusa testa");
-    }
-  };
-
   const removeTest = async (test: AdminTestSummary) => {
     const ok = confirm(`Obrisi test \"${test.title}\" iz baze?`);
     if (!ok) {
@@ -155,19 +134,9 @@ export default function AdminTests() {
     }
   };
 
-  const cleanupInvalid = async () => {
-    try {
-      setError(null);
-      await cleanupInvalidTestsAdmin();
-      await load();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Greska pri ciscenju neispravnih testova");
-    }
-  };
-
   return (
     <div className="p-6 text-white space-y-6">
-      <h1 className="text-2xl font-bold">Admin - Testovi</h1>
+      <h1 className="text-2xl font-bold">Testovi</h1>
 
       {error && (
         <div className="text-red-300 bg-red-950/40 border border-red-900 rounded p-3">{error}</div>
@@ -175,7 +144,7 @@ export default function AdminTests() {
 
       <Card title="Kreiranje novog testa">
         <div className="space-y-4">
-          <Input label="Naziv testa" value={title} onChange={setTitle} placeholder="npr. Teorija nivo 1" />
+          <Input label="Naziv testa" value={title} onChange={setTitle} placeholder="..." />
 
           <div>
             <label className="block text-sm text-slate-300 mb-1">Opis</label>
@@ -184,7 +153,7 @@ export default function AdminTests() {
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Kratak opis testa"
+              placeholder="..."
             />
           </div>
 
@@ -199,17 +168,18 @@ export default function AdminTests() {
                 </div>
 
                 <Input
-                  label="Tekst pitanja"
+                 
                   value={question.text}
                   onChange={(value) => updateQuestionText(index, value)}
                   placeholder="Unesi pitanje"
                 />
+  
 
                 <div className="grid md:grid-cols-2 gap-3">
                   {question.options.map((option, optionIndex) => (
                     <Input
                       key={optionIndex}
-                      label={`Opcija ${optionIndex + 1}`}
+                      
                       value={option}
                       onChange={(value) => updateOption(index, optionIndex, value)}
                       placeholder={`Odgovor ${optionIndex + 1}`}
@@ -241,11 +211,7 @@ export default function AdminTests() {
         </div>
       </Card>
 
-      <Card title="Postojeci testovi">
-        <div className="mb-3">
-          <Button variant="secondary" onClick={cleanupInvalid}>Ocisti invalidne (undefined)</Button>
-        </div>
-
+      <Card title="Postojeći testovi">
         {loading ? (
           <p className="text-slate-300">Ucitavanje...</p>
         ) : tests.length === 0 ? (
@@ -260,27 +226,12 @@ export default function AdminTests() {
                 <div>
                   <p className="font-semibold">{test.title}</p>
                   <p className="text-slate-400 text-sm">
-                    {test.questionCount} pitanja | {formatDate(test.createdAt)}
+                    {test.questionCount} pitanja
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span
-                    className={
-                      "text-xs px-2 py-1 rounded border " +
-                      (test.isActive
-                        ? "bg-green-600/20 text-green-300 border-green-700/50"
-                        : "bg-slate-700 text-slate-300 border-slate-600")
-                    }
-                  >
-                    {test.isActive ? "Aktivan" : "Neaktivan"}
-                  </span>
-                  <Button variant="secondary" onClick={() => toggleStatus(test)}>
-                    {test.isActive ? "Deaktiviraj" : "Aktiviraj"}
-                  </Button>
-                  <Button variant="danger" onClick={() => removeTest(test)}>
-                    Obrisi
-                  </Button>
-                </div>
+                <Button variant="danger" onClick={() => removeTest(test)}>
+                  Obrisi
+                </Button>
               </div>
             ))}
           </div>
@@ -289,3 +240,4 @@ export default function AdminTests() {
     </div>
   );
 }
+

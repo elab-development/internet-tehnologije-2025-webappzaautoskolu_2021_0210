@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getLessons, type Lesson } from '../api/lessons';
-import { getMonthWeather, type WeatherByDate } from '../api/external';
+import {
+  getMonthWeather,
+  getPublicHolidays,
+  type HolidaysByDate,
+  type WeatherByDate,
+} from '../api/external';
 import LessonsChart from '../components/ui/LessonsChart';
 import Card from '../components/ui/Card';
 
@@ -29,7 +34,7 @@ function formatDayHeader(dateKey: string) {
   const month = Number(monthRaw);
   const day = Number(dayRaw);
 
-  return new Date(year, month - 1, day).toLocaleDateString('sr-RS', {
+  return new Date(year, month - 1, day).toLocaleDateString('sr-Latn-RS', {
     weekday: 'long',
     day: '2-digit',
     month: 'long',
@@ -38,7 +43,7 @@ function formatDayHeader(dateKey: string) {
 }
 
 function formatLessonTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('sr-RS', {
+  return new Date(iso).toLocaleTimeString('sr-Latn-RS', {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -66,6 +71,7 @@ export default function InstructorCalendar() {
 
   const [monthKey, setMonthKey] = useState(currentMonthKey());
   const [weatherByDate, setWeatherByDate] = useState<WeatherByDate>({});
+  const [holidaysByDate, setHolidaysByDate] = useState<HolidaysByDate>({});
 
   const loadLessons = async () => {
     try {
@@ -89,14 +95,22 @@ export default function InstructorCalendar() {
     let active = true;
 
     const loadExternal = async () => {
-      try {
-        const weather = await getMonthWeather(monthKey);
+      const [yearRaw] = monthKey.split('-');
+      const year = Number(yearRaw);
 
-        if (!active) return;
+      const [weatherResult, holidaysResult] = await Promise.allSettled([
+        getMonthWeather(monthKey),
+        Number.isFinite(year) ? getPublicHolidays(year, 'RS') : Promise.resolve({}),
+      ]);
 
-        setWeatherByDate(weather);
-      } catch {
-        if (!active) return;
+      if (!active) return;
+
+      if (weatherResult.status === 'fulfilled') {
+        setWeatherByDate(weatherResult.value);
+      }
+
+      if (holidaysResult.status === 'fulfilled') {
+        setHolidaysByDate(holidaysResult.value);
       }
     };
 
@@ -183,11 +197,17 @@ export default function InstructorCalendar() {
       <div className="grid gap-3">
         {groupedDays.map((day) => {
           const weather = weatherByDate[day.dateKey];
+          const holidayName = holidaysByDate[day.dateKey];
           const hasUpcomingLesson = day.lessons.some((lesson) => new Date(lesson.date).getTime() >= Date.now());
 
           return (
             <Card key={day.dateKey} title={formatDayHeader(day.dateKey)}>
               <div className="flex flex-wrap gap-2 mb-3">
+                {holidayName && (
+                  <span className="text-xs px-2 py-1 rounded border bg-amber-700/20 text-amber-200 border-amber-700/40">
+                    Praznik: {holidayName}
+                  </span>
+                )}
 
                 {weather && hasUpcomingLesson && (
                   <span className="text-xs px-2 py-1 rounded border bg-cyan-700/20 text-cyan-200 border-cyan-700/40">
@@ -227,7 +247,4 @@ export default function InstructorCalendar() {
     </div>
   );
 }
-
-
-
 
